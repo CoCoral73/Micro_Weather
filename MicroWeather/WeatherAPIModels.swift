@@ -7,6 +7,7 @@
 
 import UIKit
 
+// MARK: - UltraShortTermObservations
 struct UltraShortTermObservations {
     let response: Response
     
@@ -41,6 +42,7 @@ struct UltraShortTermObservations {
     }
 }
 
+// MARK: - UltraShortTermForecast
 struct UltraShortTermForecast {
     let response: Response
     
@@ -75,6 +77,7 @@ struct UltraShortTermForecast {
     }
 }
 
+// MARK: - ShortTermForecast
 struct ShortTermForecast {
     let response: Response
     
@@ -110,6 +113,7 @@ struct ShortTermForecast {
     }
 }
 
+// MARK: - ForecastVersion
 struct ForecastVersion {
     let response: Response
     
