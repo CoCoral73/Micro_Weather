@@ -5,7 +5,7 @@
 //  Created by 김정원 on 4/18/25.
 //
 
-import Foundation
+import UIKit
 
 final class WeatherAPIManager {
     static let shared = WeatherAPIManager()
