@@ -27,7 +27,7 @@ final class WeatherAPIManager {
     func fetchWeatherData(apiType: WeatherAPIType, completionHandler: @escaping (Result<Any, NetworkError>) -> Void) {
         
         var components = URLComponents(string: apiType.endpoint)!
-        components.queryItems = [
+        components.percentEncodedQueryItems = [
             URLQueryItem(name: "serviceKey", value: self.serviceKey),
             URLQueryItem(name: "numOfRows", value: "100"),
             URLQueryItem(name: "pageNo", value: "1"),
@@ -39,7 +39,7 @@ final class WeatherAPIManager {
         ]
         
         guard let url = components.url else { return }
-        
+
         performRequest(with: url, apiType: apiType) { result in
             completionHandler(result)
         }
