@@ -8,140 +8,139 @@
 import UIKit
 
 // MARK: - UltraShortTermObservations
-struct UltraShortTermObservations {
+struct UltraShortTermObservations: Codable {
     let response: Response
     
     // MARK: - Response
-    struct Response {
+    struct Response: Codable {
         let header: Header
         let body: Body
     }
 
     // MARK: - Body
-    struct Body {
+    struct Body: Codable {
         let dataType: String
         let items: Items
         let pageNo, numOfRows, totalCount: Int
     }
 
     // MARK: - Items
-    struct Items {
+    struct Items: Codable {
         let item: [Item]
     }
 
     // MARK: - Item
-    struct Item {
+    struct Item: Codable {
         let baseDate, baseTime, category: String
         let nx, ny: Int
         let obsrValue: String
     }
 
     // MARK: - Header
-    struct Header {
+    struct Header: Codable {
         let resultCode, resultMsg: String
     }
 }
 
 // MARK: - UltraShortTermForecast
-struct UltraShortTermForecast {
+struct UltraShortTermForecast: Codable {
     let response: Response
     
     // MARK: - Response
-    struct Response {
+    struct Response: Codable {
         let header: Header
         let body: Body
     }
 
     // MARK: - Body
-    struct Body {
+    struct Body: Codable {
         let dataType: String
         let items: Items
         let pageNo, numOfRows, totalCount: Int
     }
 
     // MARK: - Items
-    struct Items {
+    struct Items: Codable {
         let item: [Item]
     }
 
     // MARK: - Item
-    struct Item {
+    struct Item: Codable {
         let baseDate, baseTime, category, fcstDate: String
         let fcstTime, fcstValue: String
         let nx, ny: Int
     }
 
     // MARK: - Header
-    struct Header {
+    struct Header: Codable {
         let resultCode, resultMsg: String
     }
 }
 
 // MARK: - ShortTermForecast
-struct ShortTermForecast {
+struct ShortTermForecast: Codable {
     let response: Response
     
     // MARK: - Response
-    struct Response {
+    struct Response: Codable {
         let header: Header
         let body: Body
     }
 
     // MARK: - Body
-    struct Body {
+    struct Body: Codable {
         let dataType: String
         let items: Items
         let pageNo, numOfRows, totalCount: Int
     }
 
     // MARK: - Items
-    struct Items {
+    struct Items: Codable {
         let item: [Item]
     }
 
     // MARK: - Item
-    struct Item {
-        let baseDate, baseTime: String
-        let category: Category
+    struct Item: Codable {
+        let baseDate, baseTime, category: String
         let fcstDate, fcstTime, fcstValue: String
         let nx, ny: Int
     }
 
     // MARK: - Header
-    struct Header {
+    struct Header: Codable {
         let resultCode, resultMsg: String
     }
 }
 
 // MARK: - ForecastVersion
-struct ForecastVersion {
+struct ForecastVersion: Codable {
     let response: Response
     
     // MARK: - Response
-    struct Response {
+    struct Response: Codable {
         let header: Header
         let body: Body
     }
 
     // MARK: - Body
-    struct Body {
+    struct Body: Codable {
         let dataType: String
         let items: Items
         let pageNo, numOfRows, totalCount: Int
     }
 
     // MARK: - Items
-    struct Items {
+    struct Items: Codable {
         let item: [Item]
     }
 
     // MARK: - Item
-    struct Item {
+    struct Item: Codable {
         let filetype, version: String
     }
 
     // MARK: - Header
-    struct Header {
+    struct Header: Codable {
         let resultCode, resultMsg: String
     }
 }
