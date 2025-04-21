@@ -28,5 +28,28 @@ final class WeatherManager {
             }
         }
     }
-
+    
+    func fetchUltraShortTermFcst(completionHandler: @escaping () -> Void) {
+        apiManager.fetchWeatherData(apiType: .ultraSrtFcst) { result in
+            switch result {
+            case .success(let model):
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                completionHandler()
+            }
+        }
+    }
+    
+    func fetchShortTermFcst(completionHandler: @escaping () -> Void) {
+        apiManager.fetchWeatherData(apiType: .vilageFcst) { result in
+            switch result {
+            case .success(let model):
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                completionHandler()
+            }
+        }
+    }
 }
