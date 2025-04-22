@@ -24,7 +24,7 @@ final class WeatherAPIManager {
     
     private let serviceKey: String
     
-    func fetchWeatherData(apiType: WeatherAPIType, completionHandler: @escaping (Result<Any, NetworkError>) -> Void) {
+    func fetchWeatherData(apiType: WeatherAPIType, parameters: RequestParameters, completionHandler: @escaping (Result<Any, NetworkError>) -> Void) {
         
         var components = URLComponents(string: apiType.endpoint)!
         components.percentEncodedQueryItems = [
@@ -32,10 +32,10 @@ final class WeatherAPIManager {
             URLQueryItem(name: "numOfRows", value: "100"),
             URLQueryItem(name: "pageNo", value: "1"),
             URLQueryItem(name: "dataType", value: "JSON"),
-            URLQueryItem(name: "base_date", value: "20250421"),
-            URLQueryItem(name: "base_time", value: "1400"),
-            URLQueryItem(name: "nx", value: "55"),
-            URLQueryItem(name: "ny", value: "127")
+            URLQueryItem(name: "base_date", value: parameters.basedate),
+            URLQueryItem(name: "base_time", value: parameters.basetime),
+            URLQueryItem(name: "nx", value: parameters.nx),
+            URLQueryItem(name: "ny", value: parameters.ny)
         ]
         
         guard let url = components.url else { return }
@@ -48,6 +48,7 @@ final class WeatherAPIManager {
     private func performRequest(with url: URL, apiType: WeatherAPIType, completionHandler: @escaping (Result<Any, NetworkError>) -> Void) {
         
         let request = URLRequest(url: url)
+        print("Request URL: \(request.url!)")
         
         URLSession.shared.dataTask(with: request) { data, _, error in
                 

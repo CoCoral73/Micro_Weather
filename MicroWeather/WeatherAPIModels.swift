@@ -7,6 +7,11 @@
 
 import UIKit
 
+struct RequestParameters {
+    let basedate, basetime: String
+    let nx, ny: String
+}
+
 // MARK: - UltraShortTermObservations
 struct UltraShortTermObservations: Codable {
     let response: Response
