@@ -28,19 +28,26 @@ struct UltraShortTermObservations: Codable {
     struct Items: Codable {
         let item: [Item]
     }
-
+    
     // MARK: - Item
     struct Item: Codable {
         let baseDate, baseTime, category: String
         let nx, ny: Int
         let obsrValue: String
     }
-
+    
     // MARK: - Header
     struct Header: Codable {
         let resultCode, resultMsg: String
     }
 }
+
+struct USTOValue {
+    var temp, hum, rain: String?
+    var vec: Double?
+    var wind: String?
+}
+
 
 // MARK: - UltraShortTermForecast
 struct UltraShortTermForecast: Codable {
@@ -66,8 +73,8 @@ struct UltraShortTermForecast: Codable {
 
     // MARK: - Item
     struct Item: Codable {
-        let baseDate, baseTime, category, fcstDate: String
-        let fcstTime, fcstValue: String
+        let baseDate, baseTime, category: String
+        let fcstDate, fcstTime, fcstValue: String
         let nx, ny: Int
     }
 
@@ -111,6 +118,12 @@ struct ShortTermForecast: Codable {
         let resultCode, resultMsg: String
     }
 }
+
+struct ForecastValue {
+    var fcstdate, fcsttime: String?
+    var temp: String?
+}
+
 
 // MARK: - ForecastVersion
 struct ForecastVersion: Codable {
