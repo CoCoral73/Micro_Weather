@@ -29,7 +29,7 @@ public enum WeatherAPIType {
     var modelType: Decodable.Type {
         switch self {
         case .ultraSrtNcst:
-            return UltraShortTermObservations.self
+            return UltraShortTermNowcast.self
         case .ultraSrtFcst:
             return UltraShortTermForecast.self
         case .srtFcst:
