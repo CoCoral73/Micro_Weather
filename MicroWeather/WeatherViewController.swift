@@ -19,6 +19,7 @@ class WeatherViewController: UIViewController {
     
     @IBOutlet weak var humLabel: UILabel!
     @IBOutlet weak var rainLabel: UILabel!
+    @IBOutlet weak var vectorLabel: UILabel!
     @IBOutlet weak var windLabel: UILabel!
     
     @IBOutlet weak var basetimeLabel: UILabel!
@@ -51,6 +52,7 @@ class WeatherViewController: UIViewController {
                         self.tempLabel.text = "\(value.temp ?? "--")°"
                         self.humLabel.text = "\(value.hum ?? "--")%"
                         self.rainLabel.text = "\(value.rain ?? "--")mm"
+                        self.vectorLabel.text = "\(value.vecString)풍"
                         self.windLabel.text = "\(value.wind ?? "--")m/s"
                         self.basetimeLabel.text = "발표 시각: \(base.baseDate) \(base.baseTime)"
                         self.updatetimeLabel.text = "최근 업데이트: \(base.baseDate) \(base.baseTime)"

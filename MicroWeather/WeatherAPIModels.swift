@@ -51,6 +51,10 @@ struct NowcastValue {
     var temp, hum, rain: String?
     var vec: Double?
     var wind: String?
+    
+    var vecString: String {
+        return CompassDirection16(from: vec ?? 0).description
+    }
 }
 
 
