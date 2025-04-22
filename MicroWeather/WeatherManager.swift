@@ -15,11 +15,11 @@ final class WeatherManager {
     
     private let apiManager = WeatherAPIManager.shared
     
-    func fetchUltraShortTermObsr(completionHandler: @escaping (Result<USTOValue, Error>) -> Void) {
-        apiManager.fetchWeatherData(apiType: .ultraSrtNcst) { result in
+    func fetchUltraShortTermNowcast(parameters: RequestParameters, completionHandler: @escaping (Result<NowcastValue, Error>) -> Void) {
+        apiManager.fetchWeatherData(apiType: .ultraSrtNcst, parameters: parameters) { result in
             switch result {
             case .success(let model):
-                guard let obs = model as? UltraShortTermObservations else {
+                guard let obs = model as? UltraShortTermNowcast else {
                     completionHandler(.failure(NSError(
                         domain: "WeatherManager",
                         code: -1,
@@ -28,7 +28,7 @@ final class WeatherManager {
                     return
                 }
                 
-                var value: USTOValue = USTOValue()
+                var value: NowcastValue = NowcastValue()
                 obs.response.body.items.item.forEach { item in
                     switch item.category {
                     case "T1H":
@@ -54,8 +54,8 @@ final class WeatherManager {
         }
     }
     
-    func fetchUltraShortTermFcst(completionHandler: @escaping () -> Void) {
-        apiManager.fetchWeatherData(apiType: .ultraSrtFcst) { result in
+    func fetchUltraShortTermFcst(parameters: RequestParameters, completionHandler: @escaping () -> Void) {
+        apiManager.fetchWeatherData(apiType: .ultraSrtFcst, parameters: parameters) { result in
             switch result {
             case .success(let model):
                 completionHandler()
@@ -66,8 +66,8 @@ final class WeatherManager {
         }
     }
     
-    func fetchShortTermFcst(completionHandler: @escaping () -> Void) {
-        apiManager.fetchWeatherData(apiType: .vilageFcst) { result in
+    func fetchShortTermFcst(parameters: RequestParameters, completionHandler: @escaping () -> Void) {
+        apiManager.fetchWeatherData(apiType: .srtFcst, parameters: parameters) { result in
             switch result {
             case .success(let model):
                 completionHandler()

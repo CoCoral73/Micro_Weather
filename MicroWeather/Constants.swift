@@ -10,7 +10,7 @@ import UIKit
 public enum WeatherAPIType {
     case ultraSrtNcst
     case ultraSrtFcst
-    case vilageFcst
+    case srtFcst
     case fcstVersion
     
     var endpoint: String {
@@ -19,7 +19,7 @@ public enum WeatherAPIType {
             return "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
         case .ultraSrtFcst:
             return "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
-        case .vilageFcst:
+        case .srtFcst:
             return "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
         case .fcstVersion:
             return "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getFcstVersion"
@@ -32,7 +32,7 @@ public enum WeatherAPIType {
             return UltraShortTermObservations.self
         case .ultraSrtFcst:
             return UltraShortTermForecast.self
-        case .vilageFcst:
+        case .srtFcst:
             return ShortTermForecast.self
         case .fcstVersion:
             return ForecastVersion.self

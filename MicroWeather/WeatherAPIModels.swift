@@ -12,8 +12,8 @@ struct RequestParameters {
     let nx, ny: String
 }
 
-// MARK: - UltraShortTermObservations
-struct UltraShortTermObservations: Codable {
+// MARK: - UltraShortTermNowcast
+struct UltraShortTermNowcast: Codable {
     let response: Response
     
     // MARK: - Response
@@ -47,7 +47,7 @@ struct UltraShortTermObservations: Codable {
     }
 }
 
-struct USTOValue {
+struct NowcastValue {
     var temp, hum, rain: String?
     var vec: Double?
     var wind: String?
