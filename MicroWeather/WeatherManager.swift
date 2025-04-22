@@ -29,8 +29,6 @@ final class WeatherManager {
                 }
                 
                 var value: USTOValue = USTOValue()
-                value.basedate = obs.response.body.items.item[0].baseDate
-                value.basetime = obs.response.body.items.item[0].baseTime
                 obs.response.body.items.item.forEach { item in
                     switch item.category {
                     case "T1H":
