@@ -34,6 +34,9 @@
                                                     <segment title="실시간"/>
                                                     <segment title="예보"/>
                                                 </segments>
+                                                <connections>
+                                                    <action selector="segControlChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="qGi-ff-SEp"/>
+                                                </connections>
                                             </segmentedControl>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="35" translatesAutoresizingMaskIntoConstraints="NO" id="LLM-eZ-uOy">
                                                 <rect key="frame" x="45.666666666666657" y="90" width="302" height="266.66666666666669"/>
@@ -137,7 +140,7 @@
                                                 <rect key="frame" x="0.0" y="391.66666666666674" width="393" height="274.33333333333326"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <prototypes>
-                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" shouldIndentWhileEditing="NO" rowHeight="56" id="eqV-yH-ROo">
+                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" reuseIdentifier="UltraSrtFcstCell" rowHeight="56" id="eqV-yH-ROo" customClass="UltraShortTermForecastCell" customModule="MicroWeather" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="50" width="393" height="56"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eqV-yH-ROo" id="2BV-p1-Yvi">
@@ -145,35 +148,40 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ubR-kF-Sgk">
-                                                                    <rect key="frame" x="338" y="10.666666666666664" width="35" height="35"/>
+                                                                    <rect key="frame" x="333" y="13" width="30" height="30"/>
                                                                     <constraints>
-                                                                        <constraint firstAttribute="width" constant="35" id="EdK-Nn-dOb"/>
-                                                                        <constraint firstAttribute="height" constant="35" id="fxo-lF-LxC"/>
+                                                                        <constraint firstAttribute="width" constant="30" id="EdK-Nn-dOb"/>
+                                                                        <constraint firstAttribute="height" constant="30" id="fxo-lF-LxC"/>
                                                                     </constraints>
                                                                 </imageView>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-22°" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y3U-bO-FOW">
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-22°" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y3U-bO-FOW">
                                                                     <rect key="frame" x="286" y="17.333333333333329" width="37" height="21.666666666666671"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                                     <nil key="textColor"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="오후 3시" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cvf-z5-t7P">
-                                                                    <rect key="frame" x="20.000000000000004" y="17.333333333333329" width="62.333333333333343" height="21.666666666666671"/>
+                                                                    <rect key="frame" x="30.000000000000004" y="17.333333333333329" width="62.333333333333343" height="21.666666666666671"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                                     <nil key="textColor"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                             </subviews>
                                                             <constraints>
-                                                                <constraint firstItem="ubR-kF-Sgk" firstAttribute="leading" secondItem="Y3U-bO-FOW" secondAttribute="trailing" constant="15" id="K7T-TF-QWU"/>
+                                                                <constraint firstItem="ubR-kF-Sgk" firstAttribute="leading" secondItem="Y3U-bO-FOW" secondAttribute="trailing" constant="10" id="K7T-TF-QWU"/>
                                                                 <constraint firstItem="Y3U-bO-FOW" firstAttribute="centerY" secondItem="2BV-p1-Yvi" secondAttribute="centerY" id="cta-WP-rsU"/>
-                                                                <constraint firstAttribute="trailing" secondItem="ubR-kF-Sgk" secondAttribute="trailing" constant="20" id="kGW-lV-a7R"/>
-                                                                <constraint firstItem="cvf-z5-t7P" firstAttribute="leading" secondItem="2BV-p1-Yvi" secondAttribute="leadingMargin" id="o7Z-TT-96n"/>
+                                                                <constraint firstAttribute="trailing" secondItem="ubR-kF-Sgk" secondAttribute="trailing" constant="30" id="kGW-lV-a7R"/>
+                                                                <constraint firstItem="cvf-z5-t7P" firstAttribute="leading" secondItem="2BV-p1-Yvi" secondAttribute="leadingMargin" constant="10" id="o7Z-TT-96n"/>
                                                                 <constraint firstItem="ubR-kF-Sgk" firstAttribute="centerY" secondItem="2BV-p1-Yvi" secondAttribute="centerY" id="owc-Bh-Htq"/>
                                                                 <constraint firstItem="cvf-z5-t7P" firstAttribute="centerY" secondItem="2BV-p1-Yvi" secondAttribute="centerY" id="ypT-cu-wqA"/>
                                                             </constraints>
                                                         </tableViewCellContentView>
-                                                        <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
+                                                        <inset key="separatorInset" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                                        <connections>
+                                                            <outlet property="iconView" destination="ubR-kF-Sgk" id="8v2-my-WLU"/>
+                                                            <outlet property="tempLabel" destination="Y3U-bO-FOW" id="1c2-6q-D4T"/>
+                                                            <outlet property="timeLabel" destination="cvf-z5-t7P" id="4gP-p5-oZQ"/>
+                                                        </connections>
                                                     </tableViewCell>
                                                 </prototypes>
                                             </tableView>
@@ -215,11 +223,30 @@
                     <navigationItem key="navigationItem" title="서울시 강남구 서초동" id="qax-n3-qQC">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="star" catalog="system" id="IOf-bQ-AF9">
                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="bookmarkButtonTapped:" destination="BYZ-38-t0r" id="gEo-gt-vDa"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="search" id="O8D-2m-BWP">
                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="searchButtonTapped:" destination="BYZ-38-t0r" id="VNf-E1-TYH"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="basetimeLabel" destination="AEh-RY-Uoi" id="ses-de-Nxd"/>
+                        <outlet property="bookmarkButton" destination="IOf-bQ-AF9" id="Xgp-6b-FbN"/>
+                        <outlet property="feelsLikeLable" destination="H2e-QP-JaW" id="B1T-K9-DjQ"/>
+                        <outlet property="humLabel" destination="jaZ-1H-qkJ" id="elo-Xp-WuV"/>
+                        <outlet property="rainLabel" destination="e4a-qP-16T" id="TKM-NM-eGt"/>
+                        <outlet property="searchButton" destination="O8D-2m-BWP" id="8Ie-2C-VcM"/>
+                        <outlet property="segControl" destination="S5y-3c-8G2" id="0ss-hG-9dG"/>
+                        <outlet property="tableView" destination="8IT-vX-Qpn" id="UtZ-LM-r49"/>
+                        <outlet property="tempLabel" destination="UIr-gW-Oe6" id="4zB-uV-x2H"/>
+                        <outlet property="updatetimeLabel" destination="r2p-Jd-3Bj" id="wc5-9G-7bz"/>
+                        <outlet property="windLabel" destination="rAZ-Gk-eUn" id="Xsq-M2-e9S"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
