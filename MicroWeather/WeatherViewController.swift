@@ -15,7 +15,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var segControl: UISegmentedControl!
 
     @IBOutlet weak var tempLabel: UILabel!
-    @IBOutlet weak var feelsLikeLable: UILabel!
+    @IBOutlet weak var feelsLikeLabel: UILabel!
     
     @IBOutlet weak var humLabel: UILabel!
     @IBOutlet weak var rainLabel: UILabel!
@@ -50,6 +50,7 @@ class WeatherViewController: UIViewController {
                 case .success(let value):
                     DispatchQueue.main.async {
                         self.tempLabel.text = "\(value.temp ?? "--")°"
+                        self.feelsLikeLabel.text = "체감 \(value.feelsLike)°"
                         self.humLabel.text = "\(value.hum ?? "--")%"
                         self.rainLabel.text = "\(value.rain ?? "--")mm"
                         self.vectorLabel.text = "\(value.vecString)풍"
@@ -158,6 +159,11 @@ class WeatherViewController: UIViewController {
     
     @IBAction func segControlChanged(_ sender: UISegmentedControl) {
     }
+    
+    @IBAction func refreshButtonTapped(_ sender: UIButton) {
+        fetchUSTOAndUpdateUI()
+    }
+    
     
 }
 

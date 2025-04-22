@@ -47,17 +47,6 @@ struct UltraShortTermNowcast: Codable {
     }
 }
 
-struct NowcastValue {
-    var temp, hum, rain: String?
-    var vec: Double?
-    var wind: String?
-    
-    var vecString: String {
-        return CompassDirection16(from: vec ?? 0).description
-    }
-}
-
-
 // MARK: - UltraShortTermForecast
 struct UltraShortTermForecast: Codable {
     let response: Response
@@ -127,12 +116,6 @@ struct ShortTermForecast: Codable {
         let resultCode, resultMsg: String
     }
 }
-
-struct ForecastValue {
-    var fcstdate, fcsttime: String?
-    var temp: String?
-}
-
 
 // MARK: - ForecastVersion
 struct ForecastVersion: Codable {
