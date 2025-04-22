@@ -15,16 +15,43 @@ final class WeatherManager {
     
     private let apiManager = WeatherAPIManager.shared
     
-    func fetchUltraShortTermObsr(completionHandler: @escaping () -> Void) {
+    func fetchUltraShortTermObsr(completionHandler: @escaping (Result<USTOValue, Error>) -> Void) {
         apiManager.fetchWeatherData(apiType: .ultraSrtNcst) { result in
             switch result {
             case .success(let model):
-                if let obs = model as? UltraShortTermObservations {
-
+                guard let obs = model as? UltraShortTermObservations else {
+                    completionHandler(.failure(NSError(
+                        domain: "WeatherManager",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "타입캐스팅 실패"]
+                    )))
+                    return
                 }
+                
+                var value: USTOValue = USTOValue()
+                value.basedate = obs.response.body.items.item[0].baseDate
+                value.basetime = obs.response.body.items.item[0].baseTime
+                obs.response.body.items.item.forEach { item in
+                    switch item.category {
+                    case "T1H":
+                        value.temp = item.obsrValue
+                    case "RN1":
+                        value.rain = item.obsrValue
+                    case "REH":
+                        value.hum = item.obsrValue
+                    case "VEC":
+                        value.vec = Double(item.obsrValue)
+                    case "WSD":
+                        value.wind = item.obsrValue
+                    default:
+                        break
+                    }
+                }
+                
+                completionHandler(.success(value))
             case .failure(let error):
                 print(error.localizedDescription)
-                completionHandler()
+                completionHandler(.failure(error))
             }
         }
     }
@@ -33,7 +60,7 @@ final class WeatherManager {
         apiManager.fetchWeatherData(apiType: .ultraSrtFcst) { result in
             switch result {
             case .success(let model):
-                
+                completionHandler()
             case .failure(let error):
                 print(error.localizedDescription)
                 completionHandler()
@@ -45,7 +72,7 @@ final class WeatherManager {
         apiManager.fetchWeatherData(apiType: .vilageFcst) { result in
             switch result {
             case .success(let model):
-                
+                completionHandler()
             case .failure(let error):
                 print(error.localizedDescription)
                 completionHandler()
