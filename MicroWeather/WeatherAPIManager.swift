@@ -64,7 +64,7 @@ final class WeatherAPIManager {
                 
                 completionHandler(.success(decodedData))
             } catch {
-                completionHandler(.failure(.dataError))
+                completionHandler(.failure(.parseError))
             }
                 
         }.resume()
