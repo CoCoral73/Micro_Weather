@@ -26,12 +26,37 @@ class WeatherViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    private let weatherManager = WeatherManager.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
         setupTableview()
+        
+        fetchUSTOAndReload()
     }
+    
+    private func fetchUSTOAndReload() {
+            weatherManager.fetchUltraShortTermObsr { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let value):
+                    DispatchQueue.main.async {
+                        self.tempLabel.text = "\(value.temp ?? "--")°"
+                        self.humLabel.text = "\(value.hum ?? "--")%"
+                        self.rainLabel.text = "\(value.rain ?? "--")mm"
+                        self.windLabel.text = "\(value.wind ?? "--")m/s"
+                        self.basetimeLabel.text = "발표 시각: \(value.basedate ?? "--") \(value.basetime ?? "--")"
+                    }
+                    
+                case .failure(let error):
+                    // 에러 표시 (토스트, 얼럿 등)
+                    print("날씨 가져오기 실패:", error)
+                }
+            }
+        }
 
     private func setupUI() {
         self.navigationItem.title = "서울시 동작구 사당4동"
