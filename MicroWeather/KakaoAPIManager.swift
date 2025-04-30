@@ -22,10 +22,10 @@ struct KakaoResponse: Codable {
     let documents: [RegionData]
 }
 
-final class ReverseGeocodeManager {
-    static let shared = ReverseGeocodeManager()
+final class KakaoAPIManager {
+    static let shared = KakaoAPIManager()
     private init() {
-        guard let apiKey = ReverseGeocodeManager.loadAPIKey() else {
+        guard let apiKey = KakaoAPIManager.loadAPIKey() else {
             fatalError("🔑 Kakao API Key 불러오기 실패")
         }
         self.apiKey = apiKey
