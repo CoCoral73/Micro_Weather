@@ -28,7 +28,7 @@ final class WeatherAPIManager {
     static let shared = WeatherAPIManager()
     private init() {
         guard let apiKey = WeatherAPIManager.loadAPIServiceKey() else {
-            fatalError("🔑 API Service Key 불러오기 실패")
+            fatalError("🔑 날씨 API Service Key 불러오기 실패")
         }
         self.serviceKey = apiKey
     }

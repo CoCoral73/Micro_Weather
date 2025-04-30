@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class WeatherViewController: UIViewController {
     
@@ -28,8 +29,14 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private let weatherManager = WeatherManager.shared
+    private let locationManager = LocationManager.shared
     
-    private var location: (nx: String, ny: String) = ("55", "127")
+    var address: String?
+    var xy: (nx: String, ny: String)? {
+        didSet {
+            fetchUSTOAndUpdateUI()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,12 +44,30 @@ class WeatherViewController: UIViewController {
         setupUI()
         setupTableview()
         
-        fetchUSTOAndUpdateUI()
+        loadCurrentLocationWeather()
+    }
+    
+    private func loadCurrentLocationWeather() {
+        LocationManager.shared.requestCurrentLocation { [weak self] location in
+            guard let self = self else { return }
+            guard let location = location else { return }
+            
+            locationManager.convertLocationToAddress(location: location) { addr in
+                DispatchQueue.main.async {
+                    self.title = addr ?? "주소 정보 없음"
+                }
+            }
+            DispatchQueue.main.async {
+                self.xy = self.locationManager.convertLocationToCoordinate(location: location)
+            }
+        }
     }
     
     private func fetchUSTOAndUpdateUI() {
+        guard let xy = self.xy else { return }
+ 
         let base = calculateBaseDateTime(for: .ultraSrtNcst)
-        let parameters = RequestParameters(basedate: base.baseDate, basetime: base.baseTime, nx: location.nx, ny: location.ny)
+        let parameters = RequestParameters(basedate: base.baseDate, basetime: base.baseTime, nx: xy.nx, ny: xy.ny)
         weatherManager.fetchUltraShortTermNowcast(parameters: parameters) { [weak self] result in
                 guard let self = self else { return }
                 
@@ -55,18 +80,17 @@ class WeatherViewController: UIViewController {
                         self.rainLabel.text = "\(value.rain ?? "--")mm"
                         self.vectorLabel.text = "\(value.vecString)풍"
                         self.windLabel.text = "\(value.wind ?? "--")m/s"
-                        self.basetimeLabel.text = "발표 시각: \(base.baseDate) \(base.baseTime)"
-                        self.updatetimeLabel.text = "최근 업데이트: \(base.baseDate) \(base.baseTime)"
+                        self.basetimeLabel.text = "기준 시각: \(base.baseString)"
+                        self.updatetimeLabel.text = "최근 업데이트: \(base.updateString)"
                     }
                     
                 case .failure(let error):
-                    // 에러 표시 (토스트, 얼럿 등)
                     print("날씨 가져오기 실패:", error)
                 }
         }
     }
 
-    func calculateBaseDateTime(for apiType: WeatherAPIType, now: Date = Date(), calendar: Calendar = Calendar.current) -> (baseDate: String, baseTime: String) {
+    func calculateBaseDateTime(for apiType: WeatherAPIType, now: Date = Date(), calendar: Calendar = Calendar.current) -> (baseDate: String, baseTime: String, baseString: String, updateString: String) {
         // 1) 포맷터 준비
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
@@ -118,7 +142,7 @@ class WeatherViewController: UIViewController {
                 candidateTimes = [chosen]
             } else {
                 // 아직 첫 타임도 유효 전 → 어제 23:00
-                var yesterday = calendar.date(byAdding: .day, value: -1, to: now)!
+                let yesterday = calendar.date(byAdding: .day, value: -1, to: now)!
                 var comps = calendar.dateComponents([.year, .month, .day], from: yesterday)
                 comps.hour = 23; comps.minute = 0
                 let dt = calendar.date(from: comps)!
@@ -132,7 +156,11 @@ class WeatherViewController: UIViewController {
         let baseDT = candidateTimes.first!
         let baseDate = dateFormatter.string(from: baseDT)
         let baseTime = timeFormatter.string(from: baseDT)
-        return (baseDate, baseTime)
+        
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let baseString = dateFormatter.string(from: baseDT)
+        let updateString = dateFormatter.string(from: now)
+        return (baseDate, baseTime, baseString, updateString)
     }
     
 

@@ -20,11 +20,12 @@ final class WeatherManager {
             switch result {
             case .success(let model):
                 guard let obs = model as? UltraShortTermNowcast else {
-                    completionHandler(.failure(NSError(
-                        domain: "WeatherManager",
-                        code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "타입캐스팅 실패"]
-                    )))
+                    completionHandler(.failure(NSError(domain: "WeatherManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "타입캐스팅 실패"])))
+                    return
+                }
+                
+                guard obs.response.header.resultCode == "00" else {
+                    completionHandler(.failure(NSError(domain: "WeatherManager", code: Int(obs.response.header.resultCode) ?? -2, userInfo: [NSLocalizedDescriptionKey: obs.response.header.resultMsg])))
                     return
                 }
                 
@@ -48,7 +49,7 @@ final class WeatherManager {
                 
                 completionHandler(.success(value))
             case .failure(let error):
-                print(error.localizedDescription)
+                print(error.description)
                 completionHandler(.failure(error))
             }
         }
@@ -60,7 +61,7 @@ final class WeatherManager {
             case .success(let model):
                 completionHandler()
             case .failure(let error):
-                print(error.localizedDescription)
+                print(error.description)
                 completionHandler()
             }
         }
@@ -72,7 +73,7 @@ final class WeatherManager {
             case .success(let model):
                 completionHandler()
             case .failure(let error):
-                print(error.localizedDescription)
+                print(error.description)
                 completionHandler()
             }
         }
