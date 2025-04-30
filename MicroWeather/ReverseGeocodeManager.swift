@@ -8,18 +8,18 @@
 import UIKit
 import CoreLocation
 
-struct RegionCode: Codable {
-    let region_1depth_name: String  // 시/도
+struct RegionData: Codable {
+    let region_type: String  //H(행정동) or B(법정동)
     let region_2depth_name: String  // 시/군/구
     let region_3depth_name: String  // 읍/면/동
     
     var address: String {
-        return "\(region_1depth_name)\(region_2depth_name.replacingOccurrences(of: " ", with: ""))\(region_3depth_name)"
+        return "\(region_2depth_name) \(region_3depth_name)"
     }
 }
 
 struct KakaoResponse: Codable {
-    let documents: [RegionCode]
+    let documents: [RegionData]
 }
 
 final class ReverseGeocodeManager {
@@ -35,7 +35,7 @@ final class ReverseGeocodeManager {
     
     func fetchAddress(location: CLLocation, completion: @escaping (String?) -> Void) {
         let (longitude, latitude) = (location.coordinate.longitude, location.coordinate.latitude)
-        
+
         let urlString = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=\(longitude)&y=\(latitude)"
         guard let url = URL(string: urlString) else {
             completion(nil)
@@ -49,12 +49,12 @@ final class ReverseGeocodeManager {
             guard error == nil,
                   let data = data,
                   let kakao = try? JSONDecoder().decode(KakaoResponse.self, from: data),
-                  let first = kakao.documents.first else {
+                  let type_H = kakao.documents.filter({ $0.region_type == "H" }).first else {
                 completion(nil)
                 return
             }
-
-            completion(first.address)
+            
+            completion(type_H.address)
         }.resume()
     }
     
