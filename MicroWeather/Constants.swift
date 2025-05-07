@@ -40,51 +40,40 @@ public enum WeatherAPIType {
     }
 }
 
-/// 16방위 열거형
-enum CompassDirection16: CaseIterable {
-    case north            // 북
-    case northNorthEast   // 북북동
-    case northEast        // 북동
-    case eastNorthEast    // 동북동
-    case east             // 동
-    case eastSouthEast    // 동남동
-    case southEast        // 남동
-    case southSouthEast   // 남남동
-    case south            // 남
-    case southSouthWest   // 남남서
-    case southWest        // 남서
-    case westSouthWest    // 서남서
-    case west             // 서
-    case westNorthWest    // 서북서
-    case northWest        // 북서
-    case northNorthWest   // 북북서
+enum CompassDirection8: CaseIterable {
+    case north      // 북
+    case northEast  // 북동
+    case east       // 동
+    case southEast  // 남동
+    case south      // 남
+    case southWest  // 남서
+    case west       // 서
+    case northWest  // 북서
 
     /// 한글 설명
     var description: String {
         switch self {
-        case .north:            return "북"
-        case .northNorthEast:   return "북북동"
-        case .northEast:        return "북동"
-        case .eastNorthEast:    return "동북동"
-        case .east:             return "동"
-        case .eastSouthEast:    return "동남동"
-        case .southEast:        return "남동"
-        case .southSouthEast:   return "남남동"
-        case .south:            return "남"
-        case .southSouthWest:   return "남남서"
-        case .southWest:        return "남서"
-        case .westSouthWest:    return "서남서"
-        case .west:             return "서"
-        case .westNorthWest:    return "서북서"
-        case .northWest:        return "북서"
-        case .northNorthWest:   return "북북서"
+        case .north:     return "북"
+        case .northEast: return "북동"
+        case .east:      return "동"
+        case .southEast: return "남동"
+        case .south:     return "남"
+        case .southWest: return "남서"
+        case .west:      return "서"
+        case .northWest: return "북서"
         }
     }
 
-    /// 도(°) 값을 받아 해당 16방위로 초기화
+    /// 도(°) 값을 받아 해당 8방위로 초기화
     init(from degrees: Double) {
-        // 11.25°를 더한 후 22.5°로 나눠서 0…15 인덱스로
-        let index = Int(floor((degrees + 11.25) / 22.5)) % CompassDirection16.allCases.count
-        self = CompassDirection16.allCases[index]
+        // 360°를 8등분 → 각 구간은 45° 폭
+        // 중앙값을 맞추기 위해 22.5°를 더하고
+        // 45°로 나눈 뒤 floor → 0...7 인덱스로 변환
+        let sectors = Double(Self.allCases.count)    // 8
+        let step = 360.0 / sectors                   // 45.0
+        let halfStep = step / 2                      // 22.5
+        let rawIndex = Int(floor((degrees + halfStep) / step))
+        let index = rawIndex % CompassDirection8.allCases.count
+        self = Self.allCases[index]
     }
 }
