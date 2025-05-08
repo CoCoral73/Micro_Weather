@@ -11,7 +11,6 @@ public enum WeatherAPIType {
     case ultraSrtNcst
     case ultraSrtFcst
     case srtFcst
-    case fcstVersion
     
     var endpoint: String {
         switch self {
@@ -21,8 +20,6 @@ public enum WeatherAPIType {
             return "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
         case .srtFcst:
             return "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
-        case .fcstVersion:
-            return "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getFcstVersion"
         }
     }
     
@@ -34,8 +31,6 @@ public enum WeatherAPIType {
             return UltraShortTermForecast.self
         case .srtFcst:
             return ShortTermForecast.self
-        case .fcstVersion:
-            return ForecastVersion.self
         }
     }
 }
