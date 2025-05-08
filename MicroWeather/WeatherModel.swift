@@ -68,5 +68,60 @@ struct NowcastValue {
 
 struct ForecastValue {
     var fcstdate, fcsttime: String?
+    var pty, sky: Int?
     var temp: String?
+    
+    var dateString: String {
+        guard let fcstdate = fcstdate else { return "--" }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.dateFormat = "yyyyMMdd"
+        let fcstDate = dateFormatter.date(from: fcstdate)!
+        
+        let calendar = Calendar.current
+        if calendar.isDateInToday(fcstDate) {
+            return "오늘"
+        } else if calendar.isDateInTomorrow(fcstDate) {
+            return "내일"
+        } else {
+            dateFormatter.dateFormat = "MM월 dd일"
+            return dateFormatter.string(from: fcstDate)
+        }
+    }
+    
+    var timeString: String {
+        guard let fcsttime = fcsttime else { return "--" }
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.locale = Locale(identifier: "ko_KR")
+        timeFormatter.dateFormat = "HHmm"
+        let fcstTime = timeFormatter.date(from: fcsttime)!
+        
+        timeFormatter.dateFormat = "HH시"
+        return timeFormatter.string(from: fcstTime)
+    }
+    
+    var icon: UIImage? {
+        guard let pty = pty, let sky = sky else { return nil }
+        
+        switch pty {
+            case 1: // 비
+                return UIImage(named: "weather_rain")
+            case 2: // 비/눈
+                return UIImage(named: "weather_sleet")
+            case 3: // 눈
+                return UIImage(named: "weather_snow")
+            case 4: // 소나기
+                return UIImage(named: "weather_shower")
+            default:
+                // 강수 없음 → 하늘 상태로 판별
+                switch sky {
+                case 1: return UIImage(named: "weather_clear")
+                case 3: return UIImage(named: "weather_cloudy")
+                case 4: return UIImage(named: "weather_overcast")
+                default: return UIImage(named: "weather_clear")
+                }
+            }
+    }
 }
