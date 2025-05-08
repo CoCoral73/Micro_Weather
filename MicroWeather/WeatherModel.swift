@@ -106,22 +106,28 @@ struct ForecastValue {
         guard let pty = pty, let sky = sky else { return nil }
         
         switch pty {
-            case 1: // 비
-                return UIImage(systemName: "cloud.rain")
-            case 2: // 비/눈
-                return UIImage(systemName: "cloud.sleet")
-            case 3: // 눈
-                return UIImage(systemName: "snowflake")
-            case 4: // 소나기
-                return UIImage(named: "cloud.bolt.rain")
-            default:
-                // 강수 없음 → 하늘 상태로 판별
-                switch sky {
-                case 1: return UIImage(systemName: "sun.max")
-                case 3: return UIImage(systemName: "cloud.sun")
-                case 4: return UIImage(systemName: "smoke")
-                default: return UIImage(systemName: "sun.max")
-                }
+        case 1: // 비
+            return UIImage(systemName: "cloud.heavyrain")
+        case 2: // 비/눈
+            return UIImage(systemName: "cloud.sleet")
+        case 3: // 눈
+            return UIImage(systemName: "snowflake")
+        case 4: // 소나기
+            return UIImage(systemName: "cloud.bolt.rain")
+        case 5: // 빗방울
+            return UIImage(systemName: "cloud.drizzle")
+        case 6: // 빗방울눈날림
+            return UIImage(systemName: "cloud.sleet")
+        case 7: // 눈날림
+            return UIImage(systemName: "cloud.snow")
+        default:
+            // 강수 없음 → 하늘 상태로 판별
+            switch sky {
+            case 1: return UIImage(systemName: "sun.max")
+            case 3: return UIImage(systemName: "cloud.sun")
+            case 4: return UIImage(systemName: "smoke")
+            default: return UIImage(systemName: "sun.max")
             }
+        }
     }
 }
