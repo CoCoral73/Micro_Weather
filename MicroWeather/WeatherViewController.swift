@@ -36,9 +36,12 @@ class WeatherViewController: UIViewController {
     var address: String?
     var coordinate: (nx: String, ny: String)? {
         didSet {
-            fetchUSTOAndUpdateUI()
+            fetchUltraShortTermWeatherAndUpdateUI()
         }
     }
+    
+    var ultraShortTermForcasts: [ForecastValue] = []
+    var tableViewHeaderDateString: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,13 +68,13 @@ class WeatherViewController: UIViewController {
         }
     }
     
-    private func fetchUSTOAndUpdateUI() {
+    private func fetchUltraShortTermWeatherAndUpdateUI() {
         guard let coordinate = self.coordinate else { return }
  
-        let base = weatherManager.calculateBaseDateTime(for: .ultraSrtNcst)
-        print(base.baseTime)
-        let parameters = RequestParameters(basedate: base.baseDate, basetime: base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
-        weatherManager.fetchUltraShortTermNowcast(parameters: parameters) { [weak self] result in
+        let nowcast_base = weatherManager.calculateBaseDateTime(for: .ultraSrtNcst)
+        let nowcast_parameters = RequestParameters(basedate: nowcast_base.baseDate, basetime: nowcast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
+        
+        weatherManager.fetchUltraShortTermNowcast(parameters: nowcast_parameters) { [weak self] result in
                 guard let self = self else { return }
                 
                 switch result {
@@ -83,18 +86,33 @@ class WeatherViewController: UIViewController {
                         self.rainLabel.text = "\(value.rain ?? "--")mm"
                         self.vectorLabel.text = "\(value.vecString)풍"
                         self.windLabel.text = "\(value.wind ?? "--")m/s"
-                        self.basetimeLabel.text = "기준 시각: \(base.updatedBase)"
-                        self.updatetimeLabel.text = "최근 업데이트: \(base.lastUpdated)"
+                        self.basetimeLabel.text = "발표 시각: \(nowcast_base.updatedBase)"
+                        self.updatetimeLabel.text = "최근 업데이트: \(nowcast_base.lastUpdated)"
                     }
                     
                 case .failure(let error):
-                    print("날씨 가져오기 실패:", error)
+                    print("초단기실황 가져오기 실패:", error)
                 }
         }
+        
+        let forecast_base = weatherManager.calculateBaseDateTime(for: .ultraSrtFcst)
+        self.tableViewHeaderDateString = forecast_base.updatedBase
+        let forecast_parameters = RequestParameters(basedate: forecast_base.baseDate, basetime: forecast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
+        weatherManager.fetchUltraShortTermFcst(parameters: forecast_parameters) { [weak self] results in
+            guard let self = self else { return }
+            
+            switch results {
+            case .success(let values):
+                DispatchQueue.main.async {
+                    self.ultraShortTermForcasts = values
+                    self.tableView.tableHeaderView = self.makeTableHeader()
+                    self.tableView.reloadData()
+                }
+            case .failure(let error):
+                print("초단기예보 가져오기 실패:", error)
+            }
+        }
     }
-
-    
-    
 
     private func setupUI() {
         self.tabBarItem = UITabBarItem(title: "날씨", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
@@ -156,7 +174,7 @@ class WeatherViewController: UIViewController {
     }
     
     @IBAction func refreshButtonTapped(_ sender: UIButton) {
-        fetchUSTOAndUpdateUI()
+        fetchUltraShortTermWeatherAndUpdateUI()
     }
     
     
@@ -164,15 +182,13 @@ class WeatherViewController: UIViewController {
 
 extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return ultraShortTermForcasts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UltraSrtFcstCell", for: indexPath) as! UltraShortTermForecastCell
-            
-        cell.timeLabel.text = "오후 3시"
-        cell.tempLabel.text = "23°"
-        cell.iconView.image = UIImage(systemName: "sun.max")
+        
+        cell.forecast = ultraShortTermForcasts[indexPath.row]
             
         return cell
     }
@@ -192,7 +208,7 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
         
         // 4) 오른쪽 레이블
         let dateLabel = UILabel()
-        dateLabel.text = "2025-04-18 11:30 발표"
+        dateLabel.text = "\(tableViewHeaderDateString) 발표"
         dateLabel.font = .systemFont(ofSize: 12)
         dateLabel.textAlignment = .right
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
