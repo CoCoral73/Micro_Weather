@@ -13,9 +13,20 @@ class UltraShortTermForecastCell: UITableViewCell {
     @IBOutlet weak var tempLabel: UILabel!
     @IBOutlet weak var iconView: UIImageView!
     
+    var forecast: ForecastValue? {
+        didSet {
+            configureUIwithData()
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
 
+    func configureUIwithData() {
+        timeLabel.text = "\(forecast?.dateString ?? "") \(forecast?.timeString ?? "")"
+        tempLabel.text = "\(forecast?.temp ?? "--")°"
+        iconView.image = forecast?.icon
+    }
 }
