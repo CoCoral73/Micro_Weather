@@ -13,8 +13,10 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var bookmarkButton: UIBarButtonItem!
     @IBOutlet weak var searchButton: UIBarButtonItem!
     
+    @IBOutlet weak var currentLocationButton: UIButton!
     @IBOutlet weak var segControl: UISegmentedControl!
-
+    @IBOutlet weak var refreshButton: UIButton!
+    
     @IBOutlet weak var tempLabel: UILabel!
     @IBOutlet weak var feelsLikeLabel: UILabel!
     
@@ -97,6 +99,39 @@ class WeatherViewController: UIViewController {
     private func setupUI() {
         self.tabBarItem = UITabBarItem(title: "날씨", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
         
+
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        // 원형 코너 설정
+        currentLocationButton.layer.cornerRadius = currentLocationButton.bounds.width / 2
+
+        // 그림자 경로
+        let path = UIBezierPath(roundedRect: currentLocationButton.bounds,
+                                cornerRadius: currentLocationButton.bounds.width / 2)
+        currentLocationButton.layer.shadowPath = path.cgPath
+
+        // 그림자 설정
+        currentLocationButton.layer.shadowColor   = UIColor.black.cgColor
+        currentLocationButton.layer.shadowOpacity = 0.2
+        currentLocationButton.layer.shadowOffset  = CGSize(width: 0, height: 2)
+        currentLocationButton.layer.shadowRadius  = 6
+        
+        
+        refreshButton.layer.cornerRadius = refreshButton.bounds.width / 2
+
+        // 그림자 경로
+        let path2 = UIBezierPath(roundedRect: refreshButton.bounds,
+                                cornerRadius: refreshButton.bounds.width / 2)
+        refreshButton.layer.shadowPath = path2.cgPath
+
+        // 그림자 설정
+        refreshButton.layer.shadowColor   = UIColor.black.cgColor
+        refreshButton.layer.shadowOpacity = 0.2
+        refreshButton.layer.shadowOffset  = CGSize(width: 0, height: 2)
+        refreshButton.layer.shadowRadius  = 6
     }
     
     func setupTableview() {
@@ -114,6 +149,9 @@ class WeatherViewController: UIViewController {
     }
     
     
+    @IBAction func currentLocationButtonTapped(_ sender: UIButton) {
+        self.loadCurrentLocationWeather()
+    }
     @IBAction func segControlChanged(_ sender: UISegmentedControl) {
     }
     
