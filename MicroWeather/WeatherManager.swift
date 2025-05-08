@@ -27,6 +27,7 @@ final class WeatherManager {
         
         // 2) basetime 후보 및 valid 계산용
         var candidateTimes: [Date] = []
+        
         switch apiType {
         case .ultraSrtNcst:
             // 매시 :00
@@ -34,10 +35,9 @@ final class WeatherManager {
             c.minute = 0
             let floor = calendar.date(from: c)!
             let valid = calendar.date(byAdding: .minute, value: 10, to: floor)!
-            // valid 이전이면 이전 시각, 이후면 그대로
             let baseDT = now < valid ? calendar.date(byAdding: .hour, value: -1, to: floor)! : floor
             candidateTimes = [baseDT]
-            
+
         case .ultraSrtFcst:
             // 매시 :30
             var c = calendar.dateComponents([.year, .month, .day, .hour], from: now)
@@ -73,8 +73,6 @@ final class WeatherManager {
                 let dt = calendar.date(from: comps)!
                 candidateTimes = [dt]
             }
-        default:
-            break
         }
         
         // 3) 최종 baseDateTime
@@ -82,14 +80,21 @@ final class WeatherManager {
         let baseDate = dateFormatter.string(from: baseDT)
         let baseTime = timeFormatter.string(from: baseDT)
         
-        let updatedBase = calculateUpdatedBase(now: now, calendar: calendar)
-        
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+
+        let updatedBase: String
+        switch apiType {
+        case .ultraSrtNcst:
+            updatedBase = calculateUpdatedBase(now: now, calendar: calendar)
+        case .ultraSrtFcst, .srtFcst:
+            updatedBase = dateFormatter.string(from: baseDT)
+        }
+        
         let lastUpdated = dateFormatter.string(from: now)
         return (baseDate, baseTime, updatedBase, lastUpdated)
     }
     
-    func calculateUpdatedBase(now: Date, calendar: Calendar) -> String {
+    private func calculateUpdatedBase(now: Date, calendar: Calendar) -> String {
         var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
         let minute = comps.minute!
 
@@ -121,11 +126,6 @@ final class WeatherManager {
                     return
                 }
                 
-                guard obs.response.header.resultCode == "00" else {
-                    completionHandler(.failure(NSError(domain: "WeatherManager", code: Int(obs.response.header.resultCode) ?? -2, userInfo: [NSLocalizedDescriptionKey: obs.response.header.resultMsg])))
-                    return
-                }
-                
                 var value: NowcastValue = NowcastValue()
                 obs.response.body.items.item.forEach { item in
                     switch item.category {
@@ -152,14 +152,48 @@ final class WeatherManager {
         }
     }
     
-    func fetchUltraShortTermFcst(parameters: RequestParameters, completionHandler: @escaping () -> Void) {
+    func fetchUltraShortTermFcst(parameters: RequestParameters, completionHandler: @escaping (Result<[ForecastValue], Error>) -> Void) {
         apiManager.fetchWeatherData(apiType: .ultraSrtFcst, parameters: parameters) { result in
             switch result {
             case .success(let model):
-                completionHandler()
+                guard let obs = model as? UltraShortTermForecast else {
+                    completionHandler(.failure(NSError(domain: "WeatherManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "타입캐스팅 실패"])))
+                    return
+                }
+                
+                var values: [String: ForecastValue] = [:]
+                obs.response.body.items.item.forEach { item in
+                    let time = "\(item.fcstDate)\(item.fcstTime)"
+                    if ["T1H", "PTY", "SKY"].contains(item.category) {
+                        if values[time] == nil {
+                            values.updateValue(ForecastValue(), forKey: time)
+                            values[time]?.fcstdate = item.fcstDate
+                            values[time]?.fcsttime = item.fcstTime
+                        }
+                    }
+                    
+                    switch item.category {
+                    case "T1H":
+                        values[time]!.temp = item.fcstValue
+                    case "PTY":
+                        values[time]!.pty = Int(item.fcstValue)
+                    case "SKY":
+                        values[time]!.sky = Int(item.fcstValue)
+                    default:
+                        break
+                    }
+                }
+                
+                let sortedValues = values.values.sorted { value1, value2 in
+                    let datetime1 = "\(value1.fcstdate ?? "")\(value1.fcsttime ?? "")"
+                    let datetime2 = "\(value2.fcstdate ?? "")\(value2.fcsttime ?? "")"
+                    return datetime1 < datetime2
+                }
+                
+                completionHandler(.success([ForecastValue](sortedValues)))
             case .failure(let error):
                 print(error.description)
-                completionHandler()
+                completionHandler(.failure(error))
             }
         }
     }

@@ -107,20 +107,20 @@ struct ForecastValue {
         
         switch pty {
             case 1: // 비
-                return UIImage(named: "weather_rain")
+                return UIImage(systemName: "cloud.rain")
             case 2: // 비/눈
-                return UIImage(named: "weather_sleet")
+                return UIImage(systemName: "cloud.sleet")
             case 3: // 눈
-                return UIImage(named: "weather_snow")
+                return UIImage(systemName: "snowflake")
             case 4: // 소나기
-                return UIImage(named: "weather_shower")
+                return UIImage(named: "cloud.bolt.rain")
             default:
                 // 강수 없음 → 하늘 상태로 판별
                 switch sky {
-                case 1: return UIImage(named: "weather_clear")
-                case 3: return UIImage(named: "weather_cloudy")
-                case 4: return UIImage(named: "weather_overcast")
-                default: return UIImage(named: "weather_clear")
+                case 1: return UIImage(systemName: "sun.max")
+                case 3: return UIImage(systemName: "cloud.sun")
+                case 4: return UIImage(systemName: "smoke")
+                default: return UIImage(systemName: "sun.max")
                 }
             }
     }
