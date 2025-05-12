@@ -162,25 +162,33 @@ final class WeatherManager {
                 }
                 
                 var values: [String: ForecastValue] = [:]
+                
+                let timeFormatter = DateFormatter()
+                timeFormatter.locale = Locale(identifier: "ko_KR")
+                timeFormatter.dateFormat = "HH"
+                let current_hour = timeFormatter.string(from: Date())
+                
                 obs.response.body.items.item.forEach { item in
-                    let time = "\(item.fcstDate)\(item.fcstTime)"
-                    if ["T1H", "PTY", "SKY"].contains(item.category) {
-                        if values[time] == nil {
-                            values.updateValue(ForecastValue(), forKey: time)
-                            values[time]?.fcstdate = item.fcstDate
-                            values[time]?.fcsttime = item.fcstTime
+                    if item.fcstTime.prefix(2) != current_hour {
+                        let time = "\(item.fcstDate)\(item.fcstTime)"
+                        if ["T1H", "PTY", "SKY"].contains(item.category) {
+                            if values[time] == nil {
+                                values.updateValue(ForecastValue(), forKey: time)
+                                values[time]?.fcstdate = item.fcstDate
+                                values[time]?.fcsttime = item.fcstTime
+                            }
                         }
-                    }
-                    
-                    switch item.category {
-                    case "T1H":
-                        values[time]!.temp = item.fcstValue
-                    case "PTY":
-                        values[time]!.pty = Int(item.fcstValue)
-                    case "SKY":
-                        values[time]!.sky = Int(item.fcstValue)
-                    default:
-                        break
+                        
+                        switch item.category {
+                        case "T1H":
+                            values[time]!.temp = item.fcstValue
+                        case "PTY":
+                            values[time]!.pty = Int(item.fcstValue)
+                        case "SKY":
+                            values[time]!.sky = Int(item.fcstValue)
+                        default:
+                            break
+                        }
                     }
                 }
                 
