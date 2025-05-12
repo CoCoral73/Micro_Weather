@@ -11,3 +11,9 @@ public struct Segue {
     static let mainToSearchIdentifier = "MainToSearch"
     private init() {}
 }
+
+public struct Cell {
+    static let ultrafcstCell = "UltraSrtFcstCell"
+    static let searchCell = "SearchCell"
+    private init() {}
+}
