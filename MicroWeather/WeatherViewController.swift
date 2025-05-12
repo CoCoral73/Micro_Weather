@@ -164,6 +164,7 @@ class WeatherViewController: UIViewController {
     @IBAction func bookmarkButtonTapped(_ sender: UIBarButtonItem) {
     }
     @IBAction func searchButtonTapped(_ sender: UIBarButtonItem) {
+        performSegue(withIdentifier: Segue.mainToSearchIdentifier, sender: nil)
     }
     
     
@@ -186,7 +187,7 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "UltraSrtFcstCell", for: indexPath) as! UltraShortTermForecastCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.ultrafcstCell, for: indexPath) as! UltraShortTermForecastCell
         
         cell.forecast = ultraShortTermForcasts[indexPath.row]
             
