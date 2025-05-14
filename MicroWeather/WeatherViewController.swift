@@ -28,6 +28,9 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var basetimeLabel: UILabel!
     @IBOutlet weak var updatetimeLabel: UILabel!
     
+    @IBOutlet weak var fcstBasetimeLabel: UILabel!
+    
+    @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var tableView: UITableView!
     
     private let weatherManager = WeatherManager.shared
@@ -41,7 +44,6 @@ class WeatherViewController: UIViewController {
     }
     
     var ultraShortTermForcasts: [ForecastValue] = []
-    var tableViewHeaderDateString: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -96,7 +98,7 @@ class WeatherViewController: UIViewController {
         }
         
         let forecast_base = weatherManager.calculateBaseDateTime(for: .ultraSrtFcst)
-        self.tableViewHeaderDateString = forecast_base.updatedBase
+        self.fcstBasetimeLabel.text = "\(forecast_base.updatedBase) 발표"
         let forecast_parameters = RequestParameters(basedate: forecast_base.baseDate, basetime: forecast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
         weatherManager.fetchUltraShortTermFcst(parameters: forecast_parameters) { [weak self] results in
             guard let self = self else { return }
@@ -105,7 +107,6 @@ class WeatherViewController: UIViewController {
             case .success(let values):
                 DispatchQueue.main.async {
                     self.ultraShortTermForcasts = values
-                    self.tableView.tableHeaderView = self.makeTableHeader()
                     self.tableView.reloadData()
                 }
             case .failure(let error):
@@ -150,6 +151,7 @@ class WeatherViewController: UIViewController {
         refreshButton.layer.shadowOpacity = 0.2
         refreshButton.layer.shadowOffset  = CGSize(width: 0, height: 2)
         refreshButton.layer.shadowRadius  = 6
+        
     }
     
     func setupTableview() {
@@ -157,7 +159,6 @@ class WeatherViewController: UIViewController {
         tableView.dataSource = self
         
         tableView.rowHeight = 50
-        tableView.tableHeaderView = makeTableHeader()
         tableView.tableFooterView = makeTableFooter()
     }
     
@@ -192,59 +193,6 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
         cell.forecast = ultraShortTermForcasts[indexPath.row]
             
         return cell
-    }
-    
-    func makeTableHeader() -> UIView {
-        // 1) 전체 헤더 컨테이너
-        let header = UIView()
-        header.backgroundColor = .clear
-        // 프레임 높이는 나중에 tableHeaderView에 적용할 때 설정해 줍니다.
-        
-        // 3) 왼쪽 레이블
-        let titleLabel = UILabel()
-        titleLabel.text = "초단기예보"
-        titleLabel.font = .boldSystemFont(ofSize: 18)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        header.addSubview(titleLabel)
-        
-        // 4) 오른쪽 레이블
-        let dateLabel = UILabel()
-        dateLabel.text = "\(tableViewHeaderDateString) 발표"
-        dateLabel.font = .systemFont(ofSize: 12)
-        dateLabel.textAlignment = .right
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        header.addSubview(dateLabel)
-        
-        // 2) 굵은 구분선
-        let line = UIView()
-        line.backgroundColor = .black
-        line.translatesAutoresizingMaskIntoConstraints = false
-        header.addSubview(line)
-        
-        // 5) Auto Layout 제약 걸기
-        NSLayoutConstraint.activate([
-
-            titleLabel.topAnchor.constraint(equalTo: header.topAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 22),
-            
-            dateLabel.bottomAnchor.constraint(equalTo: line.topAnchor, constant: -8),
-            dateLabel.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: -22),
-            
-            line.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            line.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 20),
-            line.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: -20),
-            line.heightAnchor.constraint(equalToConstant: 2),
-            
-  
-            line.bottomAnchor.constraint(equalTo: header.bottomAnchor)
-        ])
-        
-        // 전체 높이를 자동으로 계산하기 (layoutIfNeeded 후)
-        header.layoutIfNeeded()
-        let headerHeight = line.frame.height + 8 + titleLabel.intrinsicContentSize.height + 8
-        header.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: headerHeight)
-        
-        return header
     }
     
     func makeTableFooter() -> UIView {
