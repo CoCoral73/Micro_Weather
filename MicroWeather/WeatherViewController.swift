@@ -13,26 +13,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var bookmarkButton: UIBarButtonItem!
     @IBOutlet weak var searchButton: UIBarButtonItem!
     
-    /*
-    @IBOutlet weak var currentLocationButton: UIButton!
-    @IBOutlet weak var segControl: UISegmentedControl!
-    @IBOutlet weak var refreshButton: UIButton!
-    
-    @IBOutlet weak var tempLabel: UILabel!
-    @IBOutlet weak var feelsLikeLabel: UILabel!
-    
-    @IBOutlet weak var humLabel: UILabel!
-    @IBOutlet weak var rainLabel: UILabel!
-    @IBOutlet weak var vectorLabel: UILabel!
-    @IBOutlet weak var windLabel: UILabel!
-    
-    @IBOutlet weak var basetimeLabel: UILabel!
-    @IBOutlet weak var updatetimeLabel: UILabel!
-    
-    @IBOutlet weak var fcstBasetimeLabel: UILabel!
-    
-    @IBOutlet weak var headerView: UIView!
-    */
+    private var headerView: WeatherHeaderView?
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -55,6 +36,32 @@ class WeatherViewController: UIViewController {
         setupTableview()
         
         loadCurrentLocationWeather()
+    }
+    
+    private func setupUI() {
+        self.tabBarItem = UITabBarItem(title: "날씨", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
+    }
+    
+    func setupTableview() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.rowHeight = 50
+        
+        let headerNib = UINib(nibName: "WeatherMainView", bundle: nil)
+        tableView.register(headerNib, forHeaderFooterViewReuseIdentifier: "headerView")
+        headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "headerView") as? WeatherHeaderView
+        connectButtonAction()
+        tableView.tableHeaderView = headerView
+        tableView.tableFooterView = makeTableFooter()
+    }
+    
+    func connectButtonAction() {
+        guard let headerView = headerView else { return }
+        
+        headerView.currentLocationButton.addTarget(self, action: #selector(currentLocationButtonTapped), for: .touchUpInside)
+        headerView.segControl.addTarget(self, action: #selector(segControlChanged), for: .valueChanged)
+        headerView.refreshButton.addTarget(self, action: #selector(refreshButtonTapped), for: .touchUpInside)
     }
     
     private func loadCurrentLocationWeather() {
@@ -85,7 +92,7 @@ class WeatherViewController: UIViewController {
             switch result {
             case .success(let value):
                 DispatchQueue.main.async {
-                    guard let headerView = self.tableView.tableHeaderView as? WeatherHeaderView else { return }
+                    guard let headerView = self.headerView else { return }
 
                     headerView.tempLabel.text = "\(value.temp ?? "--")°"
                     headerView.feelsLikeLabel.text = "체감 \(value.feelsLike)°"
@@ -103,7 +110,7 @@ class WeatherViewController: UIViewController {
         }
         
         let forecast_base = weatherManager.calculateBaseDateTime(for: .ultraSrtFcst)
-        guard let headerView = self.tableView.tableHeaderView as? WeatherHeaderView else { return }
+        guard let headerView = self.headerView else { return }
         
         headerView.fcstBasetimeLabel.text = "\(forecast_base.updatedBase) 발표"
         let forecast_parameters = RequestParameters(basedate: forecast_base.baseDate, basetime: forecast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
@@ -121,57 +128,6 @@ class WeatherViewController: UIViewController {
             }
         }
     }
-
-    private func setupUI() {
-        self.tabBarItem = UITabBarItem(title: "날씨", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
-        
-        
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        /*
-        // 원형 코너 설정
-        currentLocationButton.layer.cornerRadius = currentLocationButton.bounds.width / 2
-
-        // 그림자 경로
-        let path = UIBezierPath(roundedRect: currentLocationButton.bounds,
-                                cornerRadius: currentLocationButton.bounds.width / 2)
-        currentLocationButton.layer.shadowPath = path.cgPath
-
-        // 그림자 설정
-        currentLocationButton.layer.shadowColor   = UIColor.black.cgColor
-        currentLocationButton.layer.shadowOpacity = 0.2
-        currentLocationButton.layer.shadowOffset  = CGSize(width: 0, height: 2)
-        currentLocationButton.layer.shadowRadius  = 6
-        
-        
-        refreshButton.layer.cornerRadius = refreshButton.bounds.width / 2
-
-        // 그림자 경로
-        let path2 = UIBezierPath(roundedRect: refreshButton.bounds,
-                                cornerRadius: refreshButton.bounds.width / 2)
-        refreshButton.layer.shadowPath = path2.cgPath
-
-        // 그림자 설정
-        refreshButton.layer.shadowColor   = UIColor.black.cgColor
-        refreshButton.layer.shadowOpacity = 0.2
-        refreshButton.layer.shadowOffset  = CGSize(width: 0, height: 2)
-        refreshButton.layer.shadowRadius  = 6
-        */
-    }
-    
-    func setupTableview() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        let headerNib = UINib(nibName: "WeatherMainView", bundle: nil)
-        tableView.register(headerNib, forHeaderFooterViewReuseIdentifier: "headerView")
-        
-        tableView.rowHeight = 50
-        tableView.tableHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "headerView") as! WeatherHeaderView
-        tableView.tableFooterView = makeTableFooter()
-    }
     
     @IBAction func bookmarkButtonTapped(_ sender: UIBarButtonItem) {
     }
@@ -180,16 +136,15 @@ class WeatherViewController: UIViewController {
     }
     
     
-    @IBAction func currentLocationButtonTapped(_ sender: UIButton) {
+    @objc func currentLocationButtonTapped(_ sender: UIButton) {
         self.loadCurrentLocationWeather()
     }
-    @IBAction func segControlChanged(_ sender: UISegmentedControl) {
+    @objc func segControlChanged(_ sender: UISegmentedControl) {
     }
     
-    @IBAction func refreshButtonTapped(_ sender: UIButton) {
+    @objc func refreshButtonTapped(_ sender: UIButton) {
         fetchUltraShortTermWeatherAndUpdateUI()
     }
-    
     
 }
 
