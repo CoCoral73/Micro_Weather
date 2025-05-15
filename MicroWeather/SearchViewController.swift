@@ -87,11 +87,11 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         NSLayoutConstraint.activate([
 
             titleLabel.topAnchor.constraint(equalTo: header.topAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 22),
+            titleLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 2),
             
             line.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            line.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 20),
-            line.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: -20),
+            line.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 0),
+            line.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: 0),
             line.heightAnchor.constraint(equalToConstant: 2),
             
   
