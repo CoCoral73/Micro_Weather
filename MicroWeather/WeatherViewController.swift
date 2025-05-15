@@ -13,6 +13,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var bookmarkButton: UIBarButtonItem!
     @IBOutlet weak var searchButton: UIBarButtonItem!
     
+    /*
     @IBOutlet weak var currentLocationButton: UIButton!
     @IBOutlet weak var segControl: UISegmentedControl!
     @IBOutlet weak var refreshButton: UIButton!
@@ -31,6 +32,8 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var fcstBasetimeLabel: UILabel!
     
     @IBOutlet weak var headerView: UIView!
+    */
+    
     @IBOutlet weak var tableView: UITableView!
     
     private let weatherManager = WeatherManager.shared
@@ -77,28 +80,32 @@ class WeatherViewController: UIViewController {
         let nowcast_parameters = RequestParameters(basedate: nowcast_base.baseDate, basetime: nowcast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
         
         weatherManager.fetchUltraShortTermNowcast(parameters: nowcast_parameters) { [weak self] result in
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let value):
-                    DispatchQueue.main.async {
-                        self.tempLabel.text = "\(value.temp ?? "--")°"
-                        self.feelsLikeLabel.text = "체감 \(value.feelsLike)°"
-                        self.humLabel.text = "\(value.hum ?? "--")%"
-                        self.rainLabel.text = "\(value.rain ?? "--")mm"
-                        self.vectorLabel.text = "\(value.vecString)풍"
-                        self.windLabel.text = "\(value.wind ?? "--")m/s"
-                        self.basetimeLabel.text = "발표 시각: \(nowcast_base.updatedBase)"
-                        self.updatetimeLabel.text = "최근 업데이트: \(nowcast_base.lastUpdated)"
-                    }
-                    
-                case .failure(let error):
-                    print("초단기실황 가져오기 실패:", error)
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let value):
+                DispatchQueue.main.async {
+                    guard let headerView = self.tableView.tableHeaderView as? WeatherHeaderView else { return }
+
+                    headerView.tempLabel.text = "\(value.temp ?? "--")°"
+                    headerView.feelsLikeLabel.text = "체감 \(value.feelsLike)°"
+                    headerView.humLabel.text = "\(value.hum ?? "--")%"
+                    headerView.rainLabel.text = "\(value.rain ?? "--")mm"
+                    headerView.vectorLabel.text = "\(value.vecString)풍"
+                    headerView.windLabel.text = "\(value.wind ?? "--")m/s"
+                    headerView.basetimeLabel.text = "발표 시각: \(nowcast_base.updatedBase)"
+                    headerView.updatetimeLabel.text = "최근 업데이트: \(nowcast_base.lastUpdated)"
                 }
+                
+            case .failure(let error):
+                print("초단기실황 가져오기 실패:", error)
+            }
         }
         
         let forecast_base = weatherManager.calculateBaseDateTime(for: .ultraSrtFcst)
-        self.fcstBasetimeLabel.text = "\(forecast_base.updatedBase) 발표"
+        guard let headerView = self.tableView.tableHeaderView as? WeatherHeaderView else { return }
+        
+        headerView.fcstBasetimeLabel.text = "\(forecast_base.updatedBase) 발표"
         let forecast_parameters = RequestParameters(basedate: forecast_base.baseDate, basetime: forecast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
         weatherManager.fetchUltraShortTermFcst(parameters: forecast_parameters) { [weak self] results in
             guard let self = self else { return }
@@ -118,12 +125,12 @@ class WeatherViewController: UIViewController {
     private func setupUI() {
         self.tabBarItem = UITabBarItem(title: "날씨", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
         
-
+        
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        /*
         // 원형 코너 설정
         currentLocationButton.layer.cornerRadius = currentLocationButton.bounds.width / 2
 
@@ -151,14 +158,18 @@ class WeatherViewController: UIViewController {
         refreshButton.layer.shadowOpacity = 0.2
         refreshButton.layer.shadowOffset  = CGSize(width: 0, height: 2)
         refreshButton.layer.shadowRadius  = 6
-        
+        */
     }
     
     func setupTableview() {
         tableView.delegate = self
         tableView.dataSource = self
         
+        let headerNib = UINib(nibName: "WeatherMainView", bundle: nil)
+        tableView.register(headerNib, forHeaderFooterViewReuseIdentifier: "headerView")
+        
         tableView.rowHeight = 50
+        tableView.tableHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "headerView") as! WeatherHeaderView
         tableView.tableFooterView = makeTableFooter()
     }
     
