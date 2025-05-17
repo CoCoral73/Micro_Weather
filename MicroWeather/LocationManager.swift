@@ -45,7 +45,10 @@ final class LocationManager: NSObject {
         let coordinate = xyConverter.calculateCoordinate(lon: longitude, lat: latitude)
         
         kakaoAPIManager.fetchAddress(location: location) { [weak self] addr in
-            guard let self = self else { return }
+            guard let self = self, let addr = addr else {
+                completion(nil)
+                return
+            }
             
             let bookmarks = self.placemarkManager.getBookmarks()
             completion(Placemark(address: addr,
@@ -54,6 +57,31 @@ final class LocationManager: NSObject {
         }
     }
     
+    func getSearchResults(keyword: String, completion: @escaping ([Placemark]?) -> Void) {
+        kakaoAPIManager.fetchCoordinate(keyword: keyword) { [weak self] datas in
+            guard let self = self, let datas = datas else {
+                completion(nil)
+                return
+            }
+            
+            let bookmarks = placemarkManager.getBookmarks()
+            var placemarks = [Placemark]()
+            datas.forEach { data in
+                if data.address.address != " " {
+                    let coordinate = self.xyConverter.calculateCoordinate(lon: Double(data.x)!, lat: Double(data.y)!)
+                    let isBookmark = bookmarks.contains { pm in
+                        pm.address == data.address.address
+                    }
+                    
+                    placemarks.append(Placemark(address: data.address.address, nx: String(coordinate.x), ny: String(coordinate.y), isBookmark: isBookmark))
+                }
+            }
+            
+            completion(placemarks)
+        }
+    }
+    
+    /*
     func convertLocationToAddress(location: CLLocation, completion: @escaping (String?) -> Void) {
         kakaoAPIManager.fetchAddress(location: location) { addr in
             completion(addr)
@@ -65,6 +93,7 @@ final class LocationManager: NSObject {
         let coordinate = xyConverter.calculateCoordinate(lon: longitude, lat: latitude)
         return (String(coordinate.x), String(coordinate.y))
     }
+    */
     
     private func fulfillAll(with location: CLLocation?) {
         completionHandlers.forEach { $0(location) }

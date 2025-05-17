@@ -9,6 +9,7 @@ import UIKit
 
 class SearchViewController: UIViewController {
 
+    private let locationManager = LocationManager.shared
     private let placemarkManager = PlacemarkManager.shared
     
     @IBOutlet weak var searchBar: UISearchBar!
@@ -17,6 +18,7 @@ class SearchViewController: UIViewController {
     
     var bookmarks: [Placemark] = []
     var recents: [Placemark] = []
+    var searchResults: [Placemark] = []
     
     var bookmarkButtonPressed: (Placemark) -> Void = { pm in }
     var tableViewSelected: (Placemark) -> Void = { pm in }
@@ -38,21 +40,51 @@ class SearchViewController: UIViewController {
         tableView.dataSource = self
 
         tableView.rowHeight = 50
-
+    }
+    
+    private func setupSearchBar() {
+        searchBar.delegate = self
     }
 
 }
 
+extension SearchViewController: UISearchBarDelegate {
+    private var isSearching: Bool {
+        guard let text = searchBar.text else { return false }
+        return !text.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let keyword = searchBar.text else { return }
+        locationManager.getSearchResults(keyword: keyword, completion: { [weak self] pms in
+            guard let self = self, let pms = pms else { return }
+            
+            DispatchQueue.main.async {
+                self.searchResults = pms
+                self.tableView.reloadData()
+            }
+        })
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        tableView.reloadData()
+    }
+}
+
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return isSearching ? 1 : 2
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            return makeTableHeader("즐겨찾기")
+        if !isSearching {
+            if section == 0 {
+                return makeTableHeader("즐겨찾기")
+            } else {
+                return makeTableHeader("최근 조회한 주소")
+            }
         } else {
-            return makeTableHeader("최근 조회한 주소")
+            return makeTableHeader("검색 결과")
         }
     }
     
@@ -61,6 +93,8 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isSearching { return searchResults.count }
+        
         if section == 0 {
             return bookmarks.count
         } else {
@@ -71,10 +105,14 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cell.searchCell, for: indexPath) as! SearchTableViewCell
         
-        if indexPath.section == 0 {
-            cell.placemark = bookmarks[indexPath.row]
+        if isSearching {
+            cell.placemark = searchResults[indexPath.row]
         } else {
-            cell.placemark = recents[indexPath.row]
+            if indexPath.section == 0 {
+                cell.placemark = bookmarks[indexPath.row]
+            } else {
+                cell.placemark = recents[indexPath.row]
+            }
         }
         
         cell.configureUIwithData()
@@ -93,10 +131,14 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selected: Placemark
         
-        if indexPath.section == 0 {
-            selected = bookmarks[indexPath.row]
+        if isSearching {
+            selected = searchResults[indexPath.row]
         } else {
-            selected = recents[indexPath.row]
+            if indexPath.section == 0 {
+                selected = bookmarks[indexPath.row]
+            } else {
+                selected = recents[indexPath.row]
+            }
         }
         tableViewSelected(selected)
         dismiss(animated: true)

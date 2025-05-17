@@ -8,7 +8,7 @@
 import UIKit
 
 struct Placemark: Codable, Equatable {
-    let address: String?
+    let address: String
     let nx, ny: String
     var isBookmark: Bool
 }

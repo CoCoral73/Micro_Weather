@@ -81,7 +81,7 @@ class WeatherViewController: UIViewController {
         guard let pm = self.placemark else { return }
         
         updateBookmarkButtonState()
-        self.navigationItem.title = pm.address ?? "주소 정보 없음"
+        self.navigationItem.title = pm.address
  
         let nowcast_base = weatherManager.calculateBaseDateTime(for: .ultraSrtNcst)
         let nowcast_parameters = RequestParameters(basedate: nowcast_base.baseDate, basetime: nowcast_base.baseTime, nx: pm.nx, ny: pm.ny)
@@ -158,6 +158,7 @@ class WeatherViewController: UIViewController {
             searchVC.tableViewSelected = { [weak self] pm in
                 self?.placemark = pm
                 self?.fetchUltraShortTermWeatherAndUpdateUI()
+                self?.placemarkManager.addRecent(pm)
             }
         }
     }
