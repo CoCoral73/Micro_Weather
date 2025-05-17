@@ -16,6 +16,8 @@ final class LocationManager: NSObject {
     private let clLocationManager = CLLocationManager()
     private var completionHandlers: [(CLLocation?) -> Void] = []
     
+    private let placemarkManager = PlacemarkManager.shared
+    
     private override init() {
         super.init()
         clLocationManager.delegate = self
@@ -35,6 +37,20 @@ final class LocationManager: NSObject {
             clLocationManager.requestLocation()
         default: //거부
             fulfillAll(with: nil)
+        }
+    }
+    
+    func convertLocationToPlacemark(location: CLLocation, completion: @escaping (Placemark?) -> Void) {
+        let (longitude, latitude) = (Double(location.coordinate.longitude), Double(location.coordinate.latitude))
+        let coordinate = xyConverter.calculateCoordinate(lon: longitude, lat: latitude)
+        
+        kakaoAPIManager.fetchAddress(location: location) { [weak self] addr in
+            guard let self = self else { return }
+            
+            let bookmarks = self.placemarkManager.getBookmarks()
+            completion(Placemark(address: addr,
+                                 nx: String(coordinate.x), ny: String(coordinate.y),
+                                 isBookmark: bookmarks.contains(where: { $0.address == addr })))
         }
     }
     

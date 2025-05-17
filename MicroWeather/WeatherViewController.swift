@@ -19,13 +19,9 @@ class WeatherViewController: UIViewController {
     
     private let weatherManager = WeatherManager.shared
     private let locationManager = LocationManager.shared
+    private let placemarkManager = PlacemarkManager.shared
     
-    var address: String?
-    var coordinate: (nx: String, ny: String)? {
-        didSet {
-            fetchUltraShortTermWeatherAndUpdateUI()
-        }
-    }
+    var placemark: Placemark?
     
     var ultraShortTermForcasts: [ForecastValue] = []
     
@@ -39,6 +35,7 @@ class WeatherViewController: UIViewController {
     }
     
     private func setupUI() {
+        //임시
         self.tabBarItem = UITabBarItem(title: "날씨", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
     }
     
@@ -69,22 +66,25 @@ class WeatherViewController: UIViewController {
             guard let self = self else { return }
             guard let location = location else { return }
             
-            locationManager.convertLocationToAddress(location: location) { addr in
+            self.locationManager.convertLocationToPlacemark(location: location) { pm in
+                guard let pm = pm else { return }
                 DispatchQueue.main.async {
-                    self.navigationItem.title = addr ?? "주소 정보 없음"
+                    self.placemark = pm
+                    self.fetchUltraShortTermWeatherAndUpdateUI()
                 }
-            }
-            DispatchQueue.main.async {  //didSet -> fetchUSTOAndUpdateUI() 실행 -> 뷰 변경 사항 있으므로 main에서 실행
-                self.coordinate = self.locationManager.convertLocationToCoordinate(location: location)
+                self.placemarkManager.addRecent(pm)
             }
         }
     }
     
     private func fetchUltraShortTermWeatherAndUpdateUI() {
-        guard let coordinate = self.coordinate else { return }
+        guard let pm = self.placemark else { return }
+        
+        updateBookmarkButtonState()
+        self.navigationItem.title = pm.address ?? "주소 정보 없음"
  
         let nowcast_base = weatherManager.calculateBaseDateTime(for: .ultraSrtNcst)
-        let nowcast_parameters = RequestParameters(basedate: nowcast_base.baseDate, basetime: nowcast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
+        let nowcast_parameters = RequestParameters(basedate: nowcast_base.baseDate, basetime: nowcast_base.baseTime, nx: pm.nx, ny: pm.ny)
         
         weatherManager.fetchUltraShortTermNowcast(parameters: nowcast_parameters) { [weak self] result in
             guard let self = self else { return }
@@ -113,7 +113,7 @@ class WeatherViewController: UIViewController {
         guard let headerView = self.headerView else { return }
         
         headerView.fcstBasetimeLabel.text = "\(forecast_base.updatedBase) 발표"
-        let forecast_parameters = RequestParameters(basedate: forecast_base.baseDate, basetime: forecast_base.baseTime, nx: coordinate.nx, ny: coordinate.ny)
+        let forecast_parameters = RequestParameters(basedate: forecast_base.baseDate, basetime: forecast_base.baseTime, nx: pm.nx, ny: pm.ny)
         weatherManager.fetchUltraShortTermFcst(parameters: forecast_parameters) { [weak self] results in
             guard let self = self else { return }
             
@@ -130,19 +130,45 @@ class WeatherViewController: UIViewController {
     }
     
     @IBAction func bookmarkButtonTapped(_ sender: UIBarButtonItem) {
+        guard placemark != nil else { return }
+        
+        placemark!.isBookmark.toggle()
+        placemarkManager.toggleBookmark(placemark!)
+        
+        updateBookmarkButtonState()
     }
+    
+    func updateBookmarkButtonState() {
+        bookmarkButton.image = placemark!.isBookmark ? UIImage(systemName: "star.fill")?.withTintColor(.systemYellow, renderingMode: .alwaysOriginal) : UIImage(systemName: "star")?.withTintColor(.black, renderingMode: .alwaysOriginal)
+    }
+    
     @IBAction func searchButtonTapped(_ sender: UIBarButtonItem) {
         performSegue(withIdentifier: Segue.mainToSearchIdentifier, sender: nil)
     }
     
-    
-    @objc func currentLocationButtonTapped(_ sender: UIButton) {
-        self.loadCurrentLocationWeather()
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Segue.mainToSearchIdentifier {
+            let searchVC = segue.destination as! SearchViewController
+            searchVC.bookmarkButtonPressed = { [weak self] pm in
+                if pm.address == self?.placemark?.address {
+                    self?.placemark?.isBookmark = pm.isBookmark
+                    self?.updateBookmarkButtonState()
+                }
+            }
+            searchVC.tableViewSelected = { [weak self] pm in
+                self?.placemark = pm
+                self?.fetchUltraShortTermWeatherAndUpdateUI()
+            }
+        }
     }
-    @objc func segControlChanged(_ sender: UISegmentedControl) {
+    
+    @objc func currentLocationButtonTapped() {
+        loadCurrentLocationWeather()
+    }
+    @objc func segControlChanged() {
     }
     
-    @objc func refreshButtonTapped(_ sender: UIButton) {
+    @objc func refreshButtonTapped() {
         fetchUltraShortTermWeatherAndUpdateUI()
     }
     

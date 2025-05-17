@@ -9,17 +9,28 @@ import UIKit
 
 class SearchViewController: UIViewController {
 
+    private let placemarkManager = PlacemarkManager.shared
+    
     @IBOutlet weak var searchBar: UISearchBar!
     
     @IBOutlet weak var tableView: UITableView!
     
-    let bookmarks: [String] = ["동작구 사당4동", "성북구 길음동", "서초구 서초2동"]
-    let searched: [String] = ["달서구 진천동", "달서구 도원동", "달서구 상인동"]
+    var bookmarks: [Placemark] = []
+    var recents: [Placemark] = []
+    
+    var bookmarkButtonPressed: (Placemark) -> Void = { pm in }
+    var tableViewSelected: (Placemark) -> Void = { pm in }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        loadBookmarksAndRecents()
         setupTableView()
+    }
+    
+    private func loadBookmarksAndRecents() {
+        bookmarks = placemarkManager.getBookmarks()
+        recents = placemarkManager.getRecents()
     }
 
     private func setupTableView() {
@@ -29,6 +40,7 @@ class SearchViewController: UIViewController {
         tableView.rowHeight = 50
 
     }
+
 }
 
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
@@ -40,7 +52,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         if section == 0 {
             return makeTableHeader("즐겨찾기")
         } else {
-            return makeTableHeader("최근 검색한 주소")
+            return makeTableHeader("최근 조회한 주소")
         }
     }
     
@@ -52,7 +64,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         if section == 0 {
             return bookmarks.count
         } else {
-            return searched.count
+            return recents.count
         }
     }
     
@@ -60,12 +72,34 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cell.searchCell, for: indexPath) as! SearchTableViewCell
         
         if indexPath.section == 0 {
-            cell.addressLabel.text = bookmarks[indexPath.row]
+            cell.placemark = bookmarks[indexPath.row]
         } else {
-            cell.addressLabel.text = searched[indexPath.row]
+            cell.placemark = recents[indexPath.row]
         }
         
+        cell.configureUIwithData()
+        
+        cell.bookmarkButtonPressed = { [weak self] cell in
+            guard let self = self else { return }
+            guard let pm = cell.placemark else { return }
+            self.bookmarks = self.placemarkManager.getBookmarks()
+            self.recents = self.placemarkManager.getRecents()
+            self.tableView.reloadData()
+            self.bookmarkButtonPressed(pm)
+        }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selected: Placemark
+        
+        if indexPath.section == 0 {
+            selected = bookmarks[indexPath.row]
+        } else {
+            selected = recents[indexPath.row]
+        }
+        tableViewSelected(selected)
+        dismiss(animated: true)
     }
     
     func makeTableHeader(_ title: String) -> UIView {
