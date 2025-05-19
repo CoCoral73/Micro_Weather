@@ -67,7 +67,9 @@ extension SearchViewController: UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        tableView.reloadData()
+        if searchText == "" {
+            tableView.reloadData()
+        }
     }
 }
 
