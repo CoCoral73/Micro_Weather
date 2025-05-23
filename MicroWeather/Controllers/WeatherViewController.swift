@@ -71,11 +71,16 @@ class WeatherViewController: UIViewController {
                 guard let pm = pm else { return }
                 DispatchQueue.main.async {
                     self.placemark = pm
-                    self.fetchUltraShortTermWeatherAndUpdateUI()
+                    self.fetchWeatherAndUpdateUI()
                 }
                 self.placemarkManager.addRecent(pm)
             }
         }
+    }
+    
+    private func fetchWeatherAndUpdateUI() {
+        guard let headerView = headerView else { return }
+        headerView.segControl.selectedSegmentIndex == 0 ? fetchUltraShortTermWeatherAndUpdateUI() : fetchShortTermForecastAndUpdateUI()
     }
     
     private func fetchUltraShortTermWeatherAndUpdateUI() {
@@ -128,6 +133,8 @@ class WeatherViewController: UIViewController {
                 print("초단기예보 가져오기 실패:", error)
             }
         }
+        
+        print(#function)
     }
     
     private func fetchShortTermForecastAndUpdateUI() {
@@ -154,7 +161,9 @@ class WeatherViewController: UIViewController {
                 print("단기예보 가져오기 실패:", error)
             }
         }
+        print(#function)
     }
+    
     @IBAction func bookmarkButtonTapped(_ sender: UIBarButtonItem) {
         guard placemark != nil else { return }
         
@@ -230,11 +239,11 @@ class WeatherViewController: UIViewController {
             tableView.reloadData()
         }
         
-        showOnlySegment ? fetchShortTermForecastAndUpdateUI() : fetchUltraShortTermWeatherAndUpdateUI()
+        fetchWeatherAndUpdateUI()
     }
     
     @objc func refreshButtonTapped() {
-        fetchUltraShortTermWeatherAndUpdateUI()
+        fetchWeatherAndUpdateUI()
     }
     
 }
