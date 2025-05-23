@@ -13,7 +13,7 @@ public struct Segue {
 }
 
 public struct Cell {
-    static let ultrafcstCell = "UltraSrtFcstCell"
+    static let forecastCell = "ForecastCell"
     static let searchCell = "SearchCell"
     private init() {}
 }

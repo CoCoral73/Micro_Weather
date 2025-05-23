@@ -121,7 +121,7 @@ final class WeatherManager {
         apiManager.fetchWeatherData(apiType: .ultraSrtNcst, parameters: parameters) { result in
             switch result {
             case .success(let model):
-                guard let obs = model as? UltraShortTermNowcast else {
+                guard let obs = model as? Nowcast else {
                     completionHandler(.failure(NSError(domain: "WeatherManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "타입캐스팅 실패"])))
                     return
                 }
@@ -156,7 +156,7 @@ final class WeatherManager {
         apiManager.fetchWeatherData(apiType: .ultraSrtFcst, parameters: parameters) { result in
             switch result {
             case .success(let model):
-                guard let obs = model as? UltraShortTermForecast else {
+                guard let obs = model as? Forecast else {
                     completionHandler(.failure(NSError(domain: "WeatherManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "타입캐스팅 실패"])))
                     return
                 }
