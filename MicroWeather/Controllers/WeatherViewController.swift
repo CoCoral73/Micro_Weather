@@ -26,6 +26,8 @@ class WeatherViewController: UIViewController {
     var ultraShortTermForcasts: [ForecastValue] = []
     var shortTermForcasts: [(String, [ForecastValue])] = []
     
+    private var expandedSection: Set<Int> = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -266,12 +268,12 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
             return ultraShortTermForcasts.count
         }
         
-        for st in (0..<shortTermForcasts.count) {
-            if section == st {
-                return shortTermForcasts[st].1.count
-            }
+        let count = shortTermForcasts[section].1.count
+        if count < 5 || expandedSection.contains(section) {
+            return count
+        } else {
+            return 5
         }
-        return headerView.segControl.selectedSegmentIndex == 0 ? ultraShortTermForcasts.count : shortTermForcasts.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -287,6 +289,57 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
         return nil
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        // 1) 세그먼트가 0이면 footer 자체가 없음
+        guard let header = headerView,
+              header.segControl.selectedSegmentIndex != 0 else {
+            return nil
+        }
+
+        // 2) 해당 섹션 데이터 개수가 기준 초과인지
+        let count = shortTermForcasts[section].1.count
+        guard count > 5 else {
+            return nil
+        }
+
+        // 3) 버튼 생성 (접기/더보기 토글 하나의 메서드로 통일)
+        let btn = UIButton(type: .system)
+        btn.tag = section
+        btn.setTitle(
+          expandedSection.contains(section) ? "닫기" : "더보기",
+          for: .normal
+        )
+        btn.addTarget(self, action: #selector(toggleSection(_:)), for: .touchUpInside)
+        return btn
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   heightForFooterInSection section: Int) -> CGFloat {
+        guard let header = headerView,
+              header.segControl.selectedSegmentIndex != 0 else {
+            return 0
+        }
+        let count = shortTermForcasts[section].1.count
+        return count > 5 ? 44 : 0  // 버튼 높이에 맞춰서
+    }
+    
+    @objc func toggleSection(_ sender: UIButton) {
+        let section = sender.tag
+        
+        if expandedSection.contains(section) {
+            expandedSection.remove(sender.tag)
+        } else {
+            expandedSection.insert(section)
+        }
+        
+        UIView.performWithoutAnimation {
+            tableView.reloadSections(
+                IndexSet(integer: section),
+                with: .none
+            )
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
