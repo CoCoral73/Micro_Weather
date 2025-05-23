@@ -185,10 +185,10 @@
                     </constraints>
                 </view>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="QmS-b1-5Mh">
-                    <rect key="frame" x="20.666666666666657" y="70" width="217" height="748"/>
+                    <rect key="frame" x="20.666666666666657" y="70" width="217" height="718"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="발표 시각: ---------- --:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nt8-w8-6Su">
-                            <rect key="frame" x="0.0" y="0.0" width="187.33333333333334" height="724"/>
+                            <rect key="frame" x="0.0" y="0.0" width="187.33333333333334" height="694"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="21" id="Bz8-qq-aNk"/>
                             </constraints>
@@ -197,7 +197,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="최근 업데이트: ---------- --:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g23-5Z-9UI">
-                            <rect key="frame" x="0.0" y="727" width="217" height="21"/>
+                            <rect key="frame" x="0.0" y="697" width="217" height="21"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="21" id="KfI-E7-e9c"/>
                             </constraints>
@@ -211,7 +211,7 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <constraints>
                 <constraint firstItem="QmS-b1-5Mh" firstAttribute="leading" secondItem="x0R-MX-nKt" secondAttribute="leading" id="3da-ey-UAm"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="QmS-b1-5Mh" secondAttribute="bottom" id="7Qu-zb-Uco"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="QmS-b1-5Mh" secondAttribute="bottom" constant="30" id="7Qu-zb-Uco"/>
                 <constraint firstItem="3dl-V6-QuF" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="9Kc-Ug-T7W"/>
                 <constraint firstItem="x0R-MX-nKt" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="10" id="9ba-5l-Lwi"/>
                 <constraint firstItem="Xzs-x1-Ia2" firstAttribute="top" secondItem="qm5-pT-t6y" secondAttribute="bottom" constant="8" id="AMR-Ag-Wua"/>
