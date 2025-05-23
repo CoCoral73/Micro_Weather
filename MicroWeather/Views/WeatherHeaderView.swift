@@ -24,10 +24,22 @@ final class WeatherHeaderView: UITableViewHeaderFooterView {
     @IBOutlet weak var basetimeLabel: UILabel!
     @IBOutlet weak var updatetimeLabel: UILabel!
     
+    @IBOutlet weak var stackView: UIStackView!
+    
+    @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var fcstBasetimeLabel: UILabel!
+    @IBOutlet weak var line: UIView!
+    
+    @IBOutlet weak var basetimeLabel2: UILabel!
+    @IBOutlet weak var updatetimeLabel2: UILabel!
+    @IBOutlet weak var stackView2: UIStackView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        stackView2.arrangedSubviews.forEach {
+            $0.isHidden = true
+        }
         // 1) 제약 반영
         self.layoutIfNeeded()
 

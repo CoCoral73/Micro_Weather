@@ -24,6 +24,7 @@ class WeatherViewController: UIViewController {
     var placemark: Placemark?
     
     var ultraShortTermForcasts: [ForecastValue] = []
+    var shortTermForcasts: [(String, [ForecastValue])] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -129,6 +130,31 @@ class WeatherViewController: UIViewController {
         }
     }
     
+    private func fetchShortTermForecastAndUpdateUI() {
+        guard let pm = placemark else { return }
+        
+        let base = weatherManager.calculateBaseDateTime(for: .srtFcst)
+        let parameters = RequestParameters(basedate: base.baseDate, basetime: base.baseTime, nx: pm.nx, ny: pm.ny)
+        
+        weatherManager.fetchShortTermFcst(parameters: parameters) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let values):
+                DispatchQueue.main.async {
+                    guard let headerView = self.headerView else { return }
+                    
+                    headerView.basetimeLabel2.text = "발표 시각: \(base.updatedBase)"
+                    headerView.updatetimeLabel2.text = "최근 업데이트: \(base.lastUpdated)"
+                    
+                    self.shortTermForcasts = values
+                    self.tableView.reloadData()
+                }
+            case .failure(let error):
+                print("단기예보 가져오기 실패:", error)
+            }
+        }
+    }
     @IBAction func bookmarkButtonTapped(_ sender: UIBarButtonItem) {
         guard placemark != nil else { return }
         
@@ -167,6 +193,44 @@ class WeatherViewController: UIViewController {
         loadCurrentLocationWeather()
     }
     @objc func segControlChanged() {
+        guard let headerView = headerView else { return }
+        let showOnlySegment = (headerView.segControl.selectedSegmentIndex == 1)
+        
+        headerView.stackView2.arrangedSubviews.forEach {
+            $0.isHidden = !showOnlySegment
+        }
+        
+        headerView.stackView.arrangedSubviews.forEach {
+            $0.isHidden = showOnlySegment
+        }
+        headerView.headerLabel.isHidden = showOnlySegment
+        headerView.fcstBasetimeLabel.isHidden = showOnlySegment
+        headerView.line.isHidden = showOnlySegment
+        
+        UIView.performWithoutAnimation {
+            headerView.setNeedsLayout()
+            headerView.layoutIfNeeded()
+
+            let targetSize = CGSize(
+            width: tableView.bounds.width,
+            height: UIView.layoutFittingCompressedSize.height
+            )
+            let fitting = headerView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+            )
+            var frame = headerView.frame
+            frame.size.height = fitting.height
+            headerView.frame = frame
+            tableView.tableHeaderView = headerView
+            
+            ultraShortTermForcasts = []
+            shortTermForcasts = []
+            tableView.reloadData()
+        }
+        
+        showOnlySegment ? fetchShortTermForecastAndUpdateUI() : fetchUltraShortTermWeatherAndUpdateUI()
     }
     
     @objc func refreshButtonTapped() {
@@ -176,15 +240,57 @@ class WeatherViewController: UIViewController {
 }
 
 extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        guard let headerView = headerView else { return 1 }
+        return headerView.segControl.selectedSegmentIndex == 0 ? 1 : shortTermForcasts.count
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ultraShortTermForcasts.count
+        guard let headerView = headerView else { return 0 }
+        
+        if headerView.segControl.selectedSegmentIndex == 0 {
+            return ultraShortTermForcasts.count
+        }
+        
+        for st in (0..<shortTermForcasts.count) {
+            if section == st {
+                return shortTermForcasts[st].1.count
+            }
+        }
+        return headerView.segControl.selectedSegmentIndex == 0 ? ultraShortTermForcasts.count : shortTermForcasts.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard let headerView = headerView else { return nil }
+        
+        if headerView.segControl.selectedSegmentIndex == 0 {
+            return nil
+        }
+        
+        for st in (0..<shortTermForcasts.count) {
+            if section == st {
+                return shortTermForcasts[st].1[0].dateString
+            }
+        }
+        return nil
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.ultrafcstCell, for: indexPath) as! UltraShortTermForecastCell
+        guard let headerView = headerView else { return UITableViewCell() }
+        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.forecastCell, for: indexPath) as! ForecastCell
         
-        cell.forecast = ultraShortTermForcasts[indexPath.row]
-            
+        if headerView.segControl.selectedSegmentIndex == 0 {
+            cell.forecast = ultraShortTermForcasts[indexPath.row]
+        } else {
+            let total = shortTermForcasts.count
+            (0..<total).forEach {
+                if indexPath.section == $0 {
+                    cell.forecast = shortTermForcasts[$0].1[indexPath.row]
+                }
+            }
+        }
+        
         return cell
     }
     

@@ -173,7 +173,7 @@ final class WeatherManager {
                         let time = "\(item.fcstDate)\(item.fcstTime)"
                         if ["T1H", "PTY", "SKY"].contains(item.category) {
                             if values[time] == nil {
-                                values.updateValue(ForecastValue(), forKey: time)
+                                values.updateValue(ForecastValue(isUltra: true), forKey: time)
                                 values[time]?.fcstdate = item.fcstDate
                                 values[time]?.fcsttime = item.fcstTime
                             }
@@ -206,14 +206,57 @@ final class WeatherManager {
         }
     }
     
-    func fetchShortTermFcst(parameters: RequestParameters, completionHandler: @escaping () -> Void) {
+    func fetchShortTermFcst(parameters: RequestParameters, completionHandler: @escaping (Result<[(String, [ForecastValue])], Error>) -> Void) {
         apiManager.fetchWeatherData(apiType: .srtFcst, parameters: parameters) { result in
             switch result {
             case .success(let model):
-                completionHandler()
+                guard let obs = model as? Forecast else {
+                    completionHandler(.failure(NSError(domain: "WeatherManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "타입캐스팅 실패"])))
+                    return
+                }
+                
+                var values: [String: [String: ForecastValue]] = [:]
+                
+                for item in obs.response.body.items.item {
+                    guard ["TMP", "PTY", "SKY"].contains(item.category) else { continue }
+                    let (date, time) = (item.fcstDate, item.fcstTime)
+                    
+                    if values[date] == nil {
+                        values[date] = [:]
+                    }
+                    
+                    var fcst = values[date]![time] ?? ForecastValue(isUltra: false)
+                    fcst.fcstdate = date
+                    fcst.fcsttime = time
+                    
+                    switch item.category {
+                    case "TMP":
+                        fcst.temp = item.fcstValue
+                    case "PTY":
+                        fcst.pty = Int(item.fcstValue)
+                    case "SKY":
+                        fcst.sky = Int(item.fcstValue)
+                    default:
+                        break
+                    }
+                    
+                    values[date]![time] = fcst
+                }
+                
+                var resultValue: [(String, [ForecastValue])] = []
+                values.keys.sorted().forEach { key in
+                    let sorted = values[key]!.values.sorted { value1, value2 in
+                        let time1 = value1.fcsttime ?? ""
+                        let time2 = value2.fcsttime ?? ""
+                        return time1 < time2
+                    }
+                    resultValue.append((key, sorted))
+                }
+                
+                completionHandler(.success(resultValue))
             case .failure(let error):
                 print(error.description)
-                completionHandler()
+                completionHandler(.failure(error))
             }
         }
     }

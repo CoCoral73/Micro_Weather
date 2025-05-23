@@ -25,7 +25,7 @@ final class WeatherAPIManager {
         var components = URLComponents(string: apiType.endpoint)!
         components.percentEncodedQueryItems = [
             URLQueryItem(name: "serviceKey", value: self.serviceKey),
-            URLQueryItem(name: "numOfRows", value: "100"),
+            URLQueryItem(name: "numOfRows", value: "1000"),
             URLQueryItem(name: "pageNo", value: "1"),
             URLQueryItem(name: "dataType", value: "JSON"),
             URLQueryItem(name: "base_date", value: parameters.basedate),

@@ -70,6 +70,7 @@ struct ForecastValue {
     var fcstdate, fcsttime: String?
     var pty, sky: Int?
     var temp: String?
+    var isUltra: Bool
     
     var dateString: String {
         guard let fcstdate = fcstdate else { return "--" }
