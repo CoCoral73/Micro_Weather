@@ -21,7 +21,7 @@
                                 <rect key="frame" x="0.0" y="103" width="393" height="666"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" reuseIdentifier="UltraSrtFcstCell" rowHeight="56" id="eqV-yH-ROo" customClass="UltraShortTermForecastCell" customModule="MicroWeather" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" reuseIdentifier="ForecastCell" rowHeight="56" id="eqV-yH-ROo" customClass="ForecastCell" customModule="MicroWeather" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="393" height="56"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eqV-yH-ROo" id="2BV-p1-Yvi">
@@ -35,14 +35,17 @@
                                                         <constraint firstAttribute="height" constant="30" id="fxo-lF-LxC"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-22°" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y3U-bO-FOW">
-                                                    <rect key="frame" x="286" y="17.333333333333329" width="37" height="21.666666666666671"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-- -시" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cvf-z5-t7P">
+                                                    <rect key="frame" x="30" y="17.333333333333329" width="233" height="21.666666666666671"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="오후 3시" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cvf-z5-t7P">
-                                                    <rect key="frame" x="30.000000000000004" y="17.333333333333329" width="62.333333333333343" height="21.666666666666671"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--°" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y3U-bO-FOW">
+                                                    <rect key="frame" x="273" y="17" width="50" height="22"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="50" id="7Nh-lj-fFq"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -50,7 +53,7 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="ubR-kF-Sgk" firstAttribute="leading" secondItem="Y3U-bO-FOW" secondAttribute="trailing" constant="10" id="K7T-TF-QWU"/>
-                                                <constraint firstItem="Y3U-bO-FOW" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cvf-z5-t7P" secondAttribute="trailing" constant="8" symbolic="YES" id="QJ4-N2-u04"/>
+                                                <constraint firstItem="Y3U-bO-FOW" firstAttribute="leading" secondItem="cvf-z5-t7P" secondAttribute="trailing" constant="10" id="PQO-iO-ByZ"/>
                                                 <constraint firstItem="Y3U-bO-FOW" firstAttribute="centerY" secondItem="2BV-p1-Yvi" secondAttribute="centerY" id="cta-WP-rsU"/>
                                                 <constraint firstAttribute="trailing" secondItem="ubR-kF-Sgk" secondAttribute="trailing" constant="30" id="kGW-lV-a7R"/>
                                                 <constraint firstItem="cvf-z5-t7P" firstAttribute="leading" secondItem="2BV-p1-Yvi" secondAttribute="leadingMargin" constant="10" id="o7Z-TT-96n"/>
