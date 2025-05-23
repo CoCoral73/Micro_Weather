@@ -221,6 +221,11 @@ final class WeatherManager {
                     guard ["TMP", "PTY", "SKY"].contains(item.category) else { continue }
                     let (date, time) = (item.fcstDate, item.fcstTime)
                     
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyyMMddHHmm"
+                    let fcstDateTime = dateFormatter.date(from: "\(date)\(time)")!
+                    guard fcstDateTime > Date() else { continue }
+                    
                     if values[date] == nil {
                         values[date] = [:]
                     }

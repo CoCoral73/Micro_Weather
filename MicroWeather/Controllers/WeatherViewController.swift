@@ -127,7 +127,9 @@ class WeatherViewController: UIViewController {
             case .success(let values):
                 DispatchQueue.main.async {
                     self.ultraShortTermForcasts = values
-                    self.tableView.reloadData()
+                    UIView.performWithoutAnimation {
+                        self.tableView.reloadData()
+                    }
                 }
             case .failure(let error):
                 print("초단기예보 가져오기 실패:", error)
@@ -155,7 +157,9 @@ class WeatherViewController: UIViewController {
                     headerView.updatetimeLabel2.text = "최근 업데이트: \(base.lastUpdated)"
                     
                     self.shortTermForcasts = values
-                    self.tableView.reloadData()
+                    UIView.performWithoutAnimation {
+                        self.tableView.reloadData()
+                    }
                 }
             case .failure(let error):
                 print("단기예보 가져오기 실패:", error)
@@ -233,11 +237,11 @@ class WeatherViewController: UIViewController {
             frame.size.height = fitting.height
             headerView.frame = frame
             tableView.tableHeaderView = headerView
-            
-            ultraShortTermForcasts = []
-            shortTermForcasts = []
-            tableView.reloadData()
         }
+        
+        ultraShortTermForcasts = []
+        shortTermForcasts = []
+        tableView.reloadData()
         
         fetchWeatherAndUpdateUI()
     }
