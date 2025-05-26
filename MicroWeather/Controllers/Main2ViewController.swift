@@ -131,12 +131,33 @@ extension Main2ViewController: UITableViewDelegate, UITableViewDataSource {
             expandedSection.insert(section)
         }
         
-        UIView.performWithoutAnimation {
-            tableView.reloadSections(
-                IndexSet(integer: section),
-                with: .none
+        tableView.beginUpdates()
+        tableView.reloadSections(IndexSet(integer: section), with: .automatic)
+        tableView.endUpdates()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+            // (A) 섹션 헤더를 화면 상단에 붙이고 싶으면
+            // 1) 섹션 헤더의 y 위치 계산
+            let headerRect = self.tableView.rectForHeader(inSection: section)
+            let desiredOffsetY = headerRect.origin.y - self.tableView.contentInset.top
+
+            // 2) 스크롤 가능한 최대 y 오프셋 계산
+            let maxOffsetY = max(
+                0,
+                self.tableView.contentSize.height + self.tableView.contentInset.bottom
+                - self.tableView.bounds.height
+            )
+
+            // 3) 0 ~ maxOffsetY 사이로 클램프
+            let clampedOffsetY = min(max(desiredOffsetY, 0), maxOffsetY)
+
+            // 4) 스크롤 이동
+            self.tableView.setContentOffset(
+                CGPoint(x: 0, y: clampedOffsetY),
+                animated: true
             )
         }
+        
     }
     
     func makeTableFooter() -> UIView {

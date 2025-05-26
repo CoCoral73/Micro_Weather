@@ -99,12 +99,8 @@ class Main1ViewController: UIViewController {
             verticalFittingPriority: .fittingSizeLevel
         )
 
-        var f = header.frame
-        if f.height != fittedSize.height {
-            f.size.height = fittedSize.height
-            header.frame = f
-            tableView.tableHeaderView = header
-        }
+        header.frame.size = fittedSize
+        tableView.tableHeaderView = header
     }
 }
 
