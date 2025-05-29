@@ -15,10 +15,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="35" translatesAutoresizingMaskIntoConstraints="NO" id="3dl-V6-QuF">
-                    <rect key="frame" x="45" y="30" width="303.33333333333331" height="760.33333333333337"/>
+                    <rect key="frame" x="87.333333333333329" y="30" width="218.66666666666669" height="760.33333333333337"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="3kQ-Nh-rj1" userLabel="온도">
-                            <rect key="frame" x="51.666666666666686" y="0.0" width="200" height="94.666666666666671"/>
+                            <rect key="frame" x="9.3333333333333428" y="0.0" width="200" height="94.666666666666671"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GwU-UA-7tg">
                                     <rect key="frame" x="0.0" y="0.0" width="200" height="65.666666666666671"/>
@@ -38,7 +38,7 @@
                             </subviews>
                         </stackView>
                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="NVm-0t-QQu" userLabel="습도 강수량 풍향">
-                            <rect key="frame" x="43.666666666666686" y="129.66666666666663" width="216" height="549"/>
+                            <rect key="frame" x="1.3333333333333428" y="129.66666666666663" width="216" height="549"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="5DZ-jI-r2B">
                                     <rect key="frame" x="0.0" y="247.00000000000003" width="52" height="55.333333333333343"/>
@@ -98,10 +98,10 @@
                             </constraints>
                         </stackView>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="bottom" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="PSB-u1-5uE" userLabel="발표, 업뎃 시각">
-                            <rect key="frame" x="0.0" y="713.66666666666663" width="303.33333333333331" height="46.666666666666629"/>
+                            <rect key="frame" x="0.0" y="713.66666666666663" width="218.66666666666666" height="46.666666666666629"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="04b-d6-eqR">
-                                    <rect key="frame" x="29.333333333333314" y="0.0" width="274" height="20.333333333333332"/>
+                                    <rect key="frame" x="29.333333333333343" y="0.0" width="189.33333333333334" height="20.333333333333332"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="발표 시각:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DTx-oK-rUl">
                                             <rect key="frame" x="0.0" y="0.0" width="68" height="20.333333333333332"/>
@@ -109,8 +109,8 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="데이터 불러오기 실패" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MJU-ov-vjg">
-                                            <rect key="frame" x="74" y="0.0" width="200" height="20.333333333333332"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="---------- --:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MJU-ov-vjg">
+                                            <rect key="frame" x="74" y="0.0" width="115.33333333333331" height="20.333333333333332"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -118,7 +118,7 @@
                                     </subviews>
                                 </stackView>
                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="lMt-TX-41u">
-                                    <rect key="frame" x="0.0" y="26.333333333333371" width="303.33333333333331" height="20.333333333333329"/>
+                                    <rect key="frame" x="0.0" y="26.333333333333371" width="218.66666666666666" height="20.333333333333329"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="최근 업데이트:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UpO-Tn-q2F">
                                             <rect key="frame" x="0.0" y="0.0" width="97.333333333333329" height="20.333333333333332"/>
@@ -126,8 +126,8 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="업데이트를 다시 시도해주세요" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EsM-gz-Prk">
-                                            <rect key="frame" x="103.33333333333334" y="0.0" width="200.00000000000003" height="20.333333333333332"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="---------- --:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EsM-gz-Prk">
+                                            <rect key="frame" x="103.33333333333334" y="0.0" width="115.33333333333334" height="20.333333333333332"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
