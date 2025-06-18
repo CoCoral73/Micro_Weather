@@ -35,10 +35,39 @@ enum WeatherAPIType {
     }
 }
 
+enum PMAPIType {
+    case tmCoordinate
+    case nearStation
+    case measurement
+    
+    var endpoint: String {
+        switch self {
+        case .tmCoordinate:
+            return "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getTMStdrCrdnt"
+        case .nearStation:
+            return "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getNearbyMsrstnList"
+        case .measurement:
+            return "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty"
+        }
+    }
+    
+    var modelType: Decodable.Type {
+        switch self {
+        case .tmCoordinate:
+            return TM_Response.self
+        case .nearStation:
+            return Station_Response.self
+        case .measurement:
+            return Measurement_Response.self
+        }
+    }
+}
+
 enum FetchError: Error {
     case networkingError
     case dataError
     case parseError
+    case castingError
     
     var description: String {
         switch self {
@@ -48,6 +77,8 @@ enum FetchError: Error {
             return "데이터 없음"
         case .parseError:
             return "JSON 파싱 오류"
+        case .castingError:
+            return "타입캐스팅 오류"
         }
     }
 }

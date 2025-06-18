@@ -10,13 +10,9 @@ import CoreLocation
 
 final class LocationManager: NSObject {
     static let shared = LocationManager()
-    private let kakaoAPIManager = KakaoAPIManager.shared
-    private let xyConverter = XYConverter.shared
     
     private let clLocationManager = CLLocationManager()
     private var completionHandlers: [(CLLocation?) -> Void] = []
-    
-    private let placemarkManager = PlacemarkManager.shared
     
     private override init() {
         super.init()
@@ -39,61 +35,6 @@ final class LocationManager: NSObject {
             fulfillAll(with: nil)
         }
     }
-    
-    func convertLocationToPlacemark(location: CLLocation, completion: @escaping (Placemark?) -> Void) {
-        let (longitude, latitude) = (Double(location.coordinate.longitude), Double(location.coordinate.latitude))
-        let coordinate = xyConverter.calculateCoordinate(lon: longitude, lat: latitude)
-        
-        kakaoAPIManager.fetchAddress(location: location) { [weak self] addr in
-            guard let self = self, let addr = addr else {
-                completion(nil)
-                return
-            }
-            
-            let bookmarks = self.placemarkManager.getBookmarks()
-            completion(Placemark(address: addr,
-                                 nx: String(coordinate.x), ny: String(coordinate.y),
-                                 isBookmark: bookmarks.contains(where: { $0.address == addr })))
-        }
-    }
-    
-    func getSearchResults(keyword: String, completion: @escaping ([Placemark]?) -> Void) {
-        kakaoAPIManager.fetchCoordinate(keyword: keyword) { [weak self] datas in
-            guard let self = self, let datas = datas else {
-                completion(nil)
-                return
-            }
-            
-            let bookmarks = placemarkManager.getBookmarks()
-            var placemarks = [Placemark]()
-            datas.forEach { data in
-                if data.address.address != " " {
-                    let coordinate = self.xyConverter.calculateCoordinate(lon: Double(data.x)!, lat: Double(data.y)!)
-                    let isBookmark = bookmarks.contains { pm in
-                        pm.address == data.address.address
-                    }
-                    
-                    placemarks.append(Placemark(address: data.address.address, nx: String(coordinate.x), ny: String(coordinate.y), isBookmark: isBookmark))
-                }
-            }
-            
-            completion(placemarks)
-        }
-    }
-    
-    /*
-    func convertLocationToAddress(location: CLLocation, completion: @escaping (String?) -> Void) {
-        kakaoAPIManager.fetchAddress(location: location) { addr in
-            completion(addr)
-        }
-    }
-    
-    func convertLocationToCoordinate(location: CLLocation) -> (nx: String, ny: String) {
-        let (longitude, latitude) = (Double(location.coordinate.longitude), Double(location.coordinate.latitude))
-        let coordinate = xyConverter.calculateCoordinate(lon: longitude, lat: latitude)
-        return (String(coordinate.x), String(coordinate.y))
-    }
-    */
     
     private func fulfillAll(with location: CLLocation?) {
         completionHandlers.forEach { $0(location) }

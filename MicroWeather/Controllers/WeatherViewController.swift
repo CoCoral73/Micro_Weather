@@ -34,46 +34,62 @@ class WeatherViewController: UIViewController {
     }()
     
     private let weatherManager = WeatherManager.shared
-    private let locationManager = LocationManager.shared
     private let placemarkManager = PlacemarkManager.shared
     
     var placemark: Placemark?
-    
-    private var expandedSection: Set<Int> = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        setupObserver()
         loadCurrentLocationWeather()
     }
     
     private func setupUI() {
-        //임시
-        self.tabBarItem = UITabBarItem(title: "날씨", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
         
         segControlChanged(segControl)
     }
     
+    private func setupObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(placemarkDidChange), name: .placemarkDidChange, object: nil)
+    }
+    
+    @objc private func placemarkDidChange(_ notification: Notification) {
+        guard let newPlacemark = notification.userInfo?["newPlacemark"] as? Placemark else {
+            return
+        }
+        
+        if placemark == newPlacemark { return }
+        
+        placemark = newPlacemark
+        fetchUltraShortTermWeatherAndUpdateUI()
+        fetchShortTermForecastAndUpdateUI()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     private func loadCurrentLocationWeather() {
-        LocationManager.shared.requestCurrentLocation { [weak self] location in
+        placemarkManager.loadPlacemarkOfCurrentLocation { [weak self] pm in
             guard let self = self else { return }
-            guard let location = location else { return }
-            
-            self.locationManager.convertLocationToPlacemark(location: location) { pm in
-                guard let pm = pm else { return }
-                DispatchQueue.main.async {
-                    self.placemark = pm
-                    self.fetchUltraShortTermWeatherAndUpdateUI()
-                    self.fetchShortTermForecastAndUpdateUI()
-                }
-                self.placemarkManager.addRecent(pm)
+            guard let pm = pm else { return }
+            DispatchQueue.main.async {
+                self.placemark = pm
+                self.placemarkManager.currentPlacemark = pm
+                self.fetchUltraShortTermWeatherAndUpdateUI()
+                self.fetchShortTermForecastAndUpdateUI()
             }
+            self.placemarkManager.addRecent(pm)
         }
     }
     
     private func fetchUltraShortTermWeatherAndUpdateUI() {
-        guard let pm = self.placemark else { return }
+        guard let pm = placemark else {
+            self.firstVC.nowcast = nil
+            return
+        }
         
         updateBookmarkButtonState()
         self.navigationItem.title = pm.address
@@ -118,7 +134,10 @@ class WeatherViewController: UIViewController {
     }
     
     private func fetchShortTermForecastAndUpdateUI() {
-        guard let pm = placemark else { return }
+        guard let pm = placemark else {
+            self.secondVC.forecasts = ([], "", "")
+            return
+        }
         
         let base = weatherManager.calculateBaseDateTime(for: .srtFcst)
         let parameters = RequestParameters(basedate: base.baseDate, basetime: base.baseTime, nx: pm.nx, ny: pm.ny)
@@ -167,10 +186,16 @@ class WeatherViewController: UIViewController {
                 }
             }
             searchVC.tableViewSelected = { [weak self] pm in
-                self?.placemark = pm
-                self?.fetchUltraShortTermWeatherAndUpdateUI()
-                self?.fetchShortTermForecastAndUpdateUI()
-                self?.placemarkManager.addRecent(pm)
+                guard let self = self else { return }
+                
+                self.placemark = pm
+                self.fetchUltraShortTermWeatherAndUpdateUI()
+                self.fetchShortTermForecastAndUpdateUI()
+                
+                if let pm = pm {
+                    self.placemarkManager.currentPlacemark = pm
+                    self.placemarkManager.addRecent(pm)
+                }
             }
         }
     }

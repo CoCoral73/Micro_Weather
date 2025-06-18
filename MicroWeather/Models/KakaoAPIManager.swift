@@ -8,35 +8,19 @@
 import UIKit
 import CoreLocation
 
-
 struct AddressResponse: Codable {
-    let documents: [AddressData]
-}
-
-struct AddressData: Codable {
-    let region_type: String  //H(행정동) or B(법정동)
-    let region_2depth_name: String  // 시/군/구
-    let region_3depth_name: String  // 읍/면/동
-    
-    var address: String {
-        return "\(region_2depth_name) \(region_3depth_name)"
-    }
+    let documents: [Address]
 }
 
 struct CoordinateResponse: Codable {
     let documents: [CoordinateData]
-}
-
-struct CoordinateData: Codable {
-    let x, y: String
-    let address: DetailAddress
     
-    struct DetailAddress: Codable {
-        let region_2depth_name: String
-        let region_3depth_h_name: String
+    struct CoordinateData: Codable {
+        let x, y: String    //x: 경도, y: 위도
+        let address: DetailData
         
-        var address: String {
-            return "\(region_2depth_name) \(region_3depth_h_name)"
+        struct DetailData: Codable {
+            let h_code: String
         }
     }
 }
@@ -52,7 +36,7 @@ final class KakaoAPIManager {
     
     private let apiKey: String
     
-    func fetchAddress(location: CLLocation, completion: @escaping (String?) -> Void) {
+    func fetchAddress(location: CLLocation, completion: @escaping ([Address]?) -> Void) {
         let (longitude, latitude) = (location.coordinate.longitude, location.coordinate.latitude)
 
         let urlString = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=\(longitude)&y=\(latitude)"
@@ -67,17 +51,16 @@ final class KakaoAPIManager {
         URLSession.shared.dataTask(with: request) { data, resp, error in
             guard error == nil,
                   let data = data,
-                  let decoded = try? JSONDecoder().decode(AddressResponse.self, from: data),
-                  let type_H = decoded.documents.filter({ $0.region_type == "H" }).first else {
+                  let decoded = try? JSONDecoder().decode(AddressResponse.self, from: data) else {
                 completion(nil)
                 return
             }
             
-            completion(type_H.address)
+            completion(decoded.documents)
         }.resume()
     }
     
-    func fetchCoordinate(keyword: String, completion: @escaping ([CoordinateData]?) -> Void) {
+    func fetchCoordinate(keyword: String, completion: @escaping (CoordinateResponse.CoordinateData?) -> Void) {
         let urlString = "https://dapi.kakao.com/v2/local/search/address.json?query=\(keyword)"
         guard let url = URL(string: urlString) else {
             completion(nil)
@@ -96,7 +79,7 @@ final class KakaoAPIManager {
                 return
             }
             
-            completion(decoded.documents)
+            completion(decoded.documents.first)
         }.resume()
     }
     

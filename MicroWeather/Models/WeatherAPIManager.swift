@@ -11,11 +11,10 @@ import UIKit
 
 final class WeatherAPIManager {
     static let shared = WeatherAPIManager()
+    private let keyManager = ServiceKeyManager.shared
+    
     private init() {
-        guard let apiKey = WeatherAPIManager.loadAPIServiceKey() else {
-            fatalError("🔑 날씨 API Service Key 불러오기 실패")
-        }
-        self.serviceKey = apiKey
+        self.serviceKey = keyManager.getServiceKey()
     }
     
     private let serviceKey: String
@@ -23,8 +22,8 @@ final class WeatherAPIManager {
     func fetchWeatherData(apiType: WeatherAPIType, parameters: RequestParameters, completionHandler: @escaping (Result<Any, FetchError>) -> Void) {
         
         var components = URLComponents(string: apiType.endpoint)!
-        components.percentEncodedQueryItems = [
-            URLQueryItem(name: "serviceKey", value: self.serviceKey),
+        
+        components.queryItems = [
             URLQueryItem(name: "numOfRows", value: "1000"),
             URLQueryItem(name: "pageNo", value: "1"),
             URLQueryItem(name: "dataType", value: "JSON"),
@@ -33,6 +32,9 @@ final class WeatherAPIManager {
             URLQueryItem(name: "nx", value: parameters.nx),
             URLQueryItem(name: "ny", value: parameters.ny)
         ]
+
+        let rest = components.percentEncodedQuery.map { "&\($0)" } ?? ""
+        components.percentEncodedQuery = "serviceKey=\(serviceKey)" + rest
         
         guard let url = components.url else { return }
 
@@ -65,15 +67,5 @@ final class WeatherAPIManager {
             }
                 
         }.resume()
-    }
-    
-    private static func loadAPIServiceKey() -> String? {
-      guard let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
-            let data = try? Data(contentsOf: url),
-            let dict = try? PropertyListSerialization
-                        .propertyList(from: data, format: nil)
-                as? [String: Any]
-      else { return nil }
-      return dict["WeatherAPIServiceKey"] as? String
     }
 }

@@ -7,16 +7,20 @@
 
 import UIKit
 
-class SearchTableViewCell: UITableViewCell {
+class SearchCell: UITableViewCell {
 
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var bookmarkButton: UIButton!
     
     private let placemarkManager = PlacemarkManager.shared
     
-    var bookmarkButtonPressed: (SearchTableViewCell) -> Void = { (sender) in }
+    var bookmarkButtonPressed: (SearchCell) -> Void = { (sender) in }
 
-    var placemark: Placemark?
+    var placemark: Placemark? {
+        didSet {
+            configureUIwithData()
+        }
+    }
     
     func configureUIwithData() {
         guard let pm = placemark else { return }

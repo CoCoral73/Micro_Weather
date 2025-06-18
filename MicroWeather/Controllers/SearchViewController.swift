@@ -11,6 +11,7 @@ class SearchViewController: UIViewController {
 
     private let locationManager = LocationManager.shared
     private let placemarkManager = PlacemarkManager.shared
+    private let addressManager = AddressManager.shared
     
     @IBOutlet weak var searchBar: UISearchBar!
     
@@ -18,10 +19,10 @@ class SearchViewController: UIViewController {
     
     var bookmarks: [Placemark] = []
     var recents: [Placemark] = []
-    var searchResults: [Placemark] = []
+    var searchResults: [Address] = []
     
     var bookmarkButtonPressed: (Placemark) -> Void = { pm in }
-    var tableViewSelected: (Placemark) -> Void = { pm in }
+    var tableViewSelected: (Placemark?) -> Void = { pm in }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,14 +57,9 @@ extension SearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let keyword = searchBar.text else { return }
-        locationManager.getSearchResults(keyword: keyword, completion: { [weak self] pms in
-            guard let self = self, let pms = pms else { return }
-            
-            DispatchQueue.main.async {
-                self.searchResults = pms
-                self.tableView.reloadData()
-            }
-        })
+        
+        searchResults = addressManager.filterAddress(keyword: keyword)
+        tableView.reloadData()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -105,45 +101,56 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.searchCell, for: indexPath) as! SearchTableViewCell
         
         if isSearching {
-            cell.placemark = searchResults[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.searchResultCell, for: indexPath) as! SearchResultCell
+            
+            cell.address = searchResults[indexPath.row]
+            return cell
+            
         } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.searchCell, for: indexPath) as! SearchCell
+            
             if indexPath.section == 0 {
                 cell.placemark = bookmarks[indexPath.row]
             } else {
                 cell.placemark = recents[indexPath.row]
             }
+            
+            cell.bookmarkButtonPressed = { [weak self] cell in
+                guard let self = self else { return }
+                guard let pm = cell.placemark else { return }
+                self.bookmarks = self.placemarkManager.getBookmarks()
+                self.recents = self.placemarkManager.getRecents()
+                self.tableView.reloadData()
+                self.bookmarkButtonPressed(pm)
+            }
+            return cell
         }
         
-        cell.configureUIwithData()
-        
-        cell.bookmarkButtonPressed = { [weak self] cell in
-            guard let self = self else { return }
-            guard let pm = cell.placemark else { return }
-            self.bookmarks = self.placemarkManager.getBookmarks()
-            self.recents = self.placemarkManager.getRecents()
-            self.tableView.reloadData()
-            self.bookmarkButtonPressed(pm)
-        }
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selected: Placemark
-        
         if isSearching {
-            selected = searchResults[indexPath.row]
+            let address = searchResults[indexPath.row]
+            placemarkManager.convertAddressToPlacemark(address: address, completion: { [weak self] pm in
+                guard let self = self else { return }
+                DispatchQueue.main.async {
+                    let selected = pm
+                    self.tableViewSelected(selected)
+                    self.dismiss(animated: true)
+                }
+            })
         } else {
+            let selected: Placemark
             if indexPath.section == 0 {
                 selected = bookmarks[indexPath.row]
             } else {
                 selected = recents[indexPath.row]
             }
+            tableViewSelected(selected)
+            dismiss(animated: true)
         }
-        tableViewSelected(selected)
-        dismiss(animated: true)
     }
     
     func makeTableHeader(_ title: String) -> UIView {
