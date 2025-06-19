@@ -74,6 +74,6 @@ final class AddressManager {
             result.append(onlyName + "동")
         }
 
-        return Array(Set(result.map { $0.lowercased() })) // 중복 제거 + 소문자 통일
+        return Array(Set(result)) // 중복 제거
     }
 }
