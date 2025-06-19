@@ -66,12 +66,12 @@ class PlacemarkManager {
         if pm.isBookmark {
             bookmark_list.append(pm)
         } else {
-            bookmark_list.removeAll() { $0.address == pm.address }
+            bookmark_list.removeAll() { $0.code == pm.code }
         }
         saveList(bookmark_list, forKey: bookmarkKey)
         
         var recent_list = loadList(forKey: recentKey)
-        if let idx = recent_list.firstIndex(where: { $0.address == pm.address }) {
+        if let idx = recent_list.firstIndex(where: { $0.code == pm.code }) {
             recent_list[idx].isBookmark = pm.isBookmark
             saveList(recent_list, forKey: recentKey)
         }
