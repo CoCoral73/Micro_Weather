@@ -18,5 +18,6 @@ public struct Cell {
     static let searchCell = "SearchCell"
     static let searchResultCell = "SearchResultCell"
     static let pmCell = "PMCell"
+    static let pmFooterCell = "PMFooterCell"
     private init() {}
 }

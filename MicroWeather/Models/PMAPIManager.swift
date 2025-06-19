@@ -18,22 +18,7 @@ class PMAPIManager {
     
     private let serviceKey: String
     
-    func fetchPMData(location: (lon: Double, lat: Double), completionHandler: @escaping (Result<Measurement_Response.Item, FetchError>) -> Void) {
-        fetchStationName(location: location) { result in
-            switch result {
-            case .success(let name):
-                print(name)
-                self.fetchMeasurement(stationName: name) { result in
-                    completionHandler(result)
-                }
-            case .failure(let error):
-                print(error.description)
-                completionHandler(.failure(error))
-            }
-        }
-    }
-    
-    private func fetchStationName(location: (lon: Double, lat: Double), completionHandler: @escaping (Result<String, FetchError>) -> Void) {
+    func fetchStationName(location: (lon: Double, lat: Double), completionHandler: @escaping (Result<String, FetchError>) -> Void) {
         let xy = TransverseMercator.project(lat: location.lat, lon: location.lon)
         var components = URLComponents(string: PMAPIType.nearStation.endpoint)!
         components.queryItems = [
@@ -67,7 +52,7 @@ class PMAPIManager {
         }
     }
     
-    private func fetchMeasurement(stationName: String, completionHandler: @escaping (Result<Measurement_Response.Item, FetchError>) -> Void) {
+    func fetchMeasurement(stationName: String, completionHandler: @escaping (Result<Measurement_Response.Item, FetchError>) -> Void) {
         var components = URLComponents(string: PMAPIType.measurement.endpoint)!
         components.queryItems = [
             URLQueryItem(name: "returnType", value: "json"),

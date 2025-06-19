@@ -341,7 +341,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PMCell" id="UAV-9U-TBK" customClass="PMCollectionViewCell" customModule="MicroWeather" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="191" height="190"/>
+                                        <rect key="frame" x="101" y="0.0" width="191" height="190"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="sNd-qc-KZL">
                                             <rect key="frame" x="0.0" y="0.0" width="191" height="190"/>
@@ -395,6 +395,57 @@
                                             <outlet property="stateLabel" destination="v3B-fl-hyY" id="b3X-uQ-Uz6"/>
                                             <outlet property="titleLabel" destination="7Vp-Bz-LjL" id="8mG-zH-lR2"/>
                                             <outlet property="valueLabel" destination="CIm-9M-n2t" id="g1r-my-WV0"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="PMFooterCell" id="DQM-Fy-ED0" customClass="PMFooterCollectionViewCell" customModule="MicroWeather" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="200" width="393" height="128"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="bZM-Qp-lxn">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="128"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GuF-BG-fhY">
+                                                    <rect key="frame" x="10" y="10" width="373" height="108"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Pya-oP-UhY">
+                                                            <rect key="frame" x="10" y="29.666666666666668" width="353" height="48.666666666666657"/>
+                                                            <subviews>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="측정소 이름:" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TRS-ZK-r0x">
+                                                                    <rect key="frame" x="135.33333333333334" y="0.0" width="82.666666666666657" height="20.333333333333332"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="출처:" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tnd-Lc-XyQ">
+                                                                    <rect key="frame" x="159.33333333333334" y="28.333333333333336" width="34.333333333333343" height="20.333333333333336"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                            </subviews>
+                                                        </stackView>
+                                                    </subviews>
+                                                    <color key="backgroundColor" systemColor="systemBrownColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="trailing" secondItem="Pya-oP-UhY" secondAttribute="trailing" constant="10" id="Nn1-TD-X1o"/>
+                                                        <constraint firstItem="Pya-oP-UhY" firstAttribute="leading" secondItem="GuF-BG-fhY" secondAttribute="leading" constant="10" id="bzq-pZ-9hb"/>
+                                                        <constraint firstItem="Pya-oP-UhY" firstAttribute="centerX" secondItem="GuF-BG-fhY" secondAttribute="centerX" id="fzE-J2-wDf"/>
+                                                        <constraint firstItem="Pya-oP-UhY" firstAttribute="centerY" secondItem="GuF-BG-fhY" secondAttribute="centerY" id="jIb-7c-IfS"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="GuF-BG-fhY" secondAttribute="bottom" constant="10" id="ZSs-ES-x5n"/>
+                                                <constraint firstAttribute="trailing" secondItem="GuF-BG-fhY" secondAttribute="trailing" constant="10" id="f0L-3A-Y4X"/>
+                                                <constraint firstItem="GuF-BG-fhY" firstAttribute="leading" secondItem="bZM-Qp-lxn" secondAttribute="leading" constant="10" id="mh5-kw-eC6"/>
+                                                <constraint firstItem="GuF-BG-fhY" firstAttribute="top" secondItem="bZM-Qp-lxn" secondAttribute="top" constant="10" id="tb3-cy-fwy"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="393" height="128"/>
+                                        <connections>
+                                            <outlet property="backView" destination="GuF-BG-fhY" id="DLs-C8-1EC"/>
+                                            <outlet property="fromLabel" destination="Tnd-Lc-XyQ" id="26A-MD-L1M"/>
+                                            <outlet property="stationNameLabel" destination="TRS-ZK-r0x" id="s3w-2M-QaT"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -676,6 +727,9 @@
         <image name="star" catalog="system" width="128" height="116"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBrownColor">
+            <color red="0.63529411759999999" green="0.51764705879999995" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGroupedBackgroundColor">
             <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

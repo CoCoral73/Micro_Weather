@@ -24,6 +24,7 @@ class PMViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
     var placemark: Placemark?
+    var stationName: String?
     var nowcast: [PMValue] = []
     
     override func viewDidLoad() {
@@ -79,26 +80,33 @@ class PMViewController: UIViewController {
         updateBookmarkButtonState()
         self.navigationItem.title = pm.address
         
-        pmManager.fetchPMData(location: (lon: pm.lon, lat: pm.lat)) { [weak self] result in
+        pmManager.fetchStationName(location: (lon: pm.lon, lat: pm.lat)) { [weak self] result in
             guard let self = self else { return }
-            
-            self.nowcast = []
             switch result {
-            case .success(let item):
-                DispatchQueue.main.async {
-                    self.timeLabel.text = item.dataTime
-                    self.updatetimeLabel.text = now
-                    
-                    self.nowcast.append(PMValue(type: .pm10, state: item.pm10Flag, value: item.pm10Value))
-                    self.nowcast.append(PMValue(type: .pm25, state: item.pm25Flag, value: item.pm25Value))
-                    self.nowcast.append(PMValue(type: .so2, state: item.so2Flag, value: item.so2Value))
-                    self.nowcast.append(PMValue(type: .co, state: item.coFlag, value: item.coValue))
-                    self.nowcast.append(PMValue(type: .o3, state: item.o3Flag, value: item.o3Value))
-                    self.nowcast.append(PMValue(type: .no2, state: item.no2Flag, value: item.no2Value))
-                    self.collectionView.reloadData()
+            case .success(let name):
+                self.stationName = name
+                self.pmManager.fetchMeasurement(stationName: name) { result in
+                    switch result {
+                    case .success(let item):
+                        DispatchQueue.main.async {
+                            self.timeLabel.text = item.dataTime
+                            self.updatetimeLabel.text = now
+                            
+                            self.nowcast.append(PMValue(type: .pm10, state: item.pm10Flag, value: item.pm10Value))
+                            self.nowcast.append(PMValue(type: .pm25, state: item.pm25Flag, value: item.pm25Value))
+                            self.nowcast.append(PMValue(type: .so2, state: item.so2Flag, value: item.so2Value))
+                            self.nowcast.append(PMValue(type: .co, state: item.coFlag, value: item.coValue))
+                            self.nowcast.append(PMValue(type: .o3, state: item.o3Flag, value: item.o3Value))
+                            self.nowcast.append(PMValue(type: .no2, state: item.no2Flag, value: item.no2Value))
+                            self.collectionView.reloadData()
+                        }
+                    case .failure(let error):
+                        print("미세먼지 측정정보 가져오기 실패:", error.description)
+                    }
                 }
             case .failure(let error):
-                print("미세먼지 측정정보 가져오기 실패:", error.description)
+                self.stationName = nil
+                print("미세먼지 측정소 가져오기 실패:", error.description)
             }
         }
 
@@ -196,15 +204,23 @@ class PMViewController: UIViewController {
 extension PMViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return nowcast.count
+        return nowcast.count + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.pmCell, for: indexPath) as! PMCollectionViewCell
         
-        cell.data = nowcast[indexPath.row]
-    
-        return cell
+        if indexPath.row == nowcast.count {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.pmFooterCell, for: indexPath) as! PMFooterCollectionViewCell
+            
+            cell.stationName = self.stationName
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.pmCell, for: indexPath) as! PMCollectionViewCell
+            
+            cell.data = nowcast[indexPath.row]
+            
+            return cell
+        }
     }
     
     // 위 아래 간격
@@ -219,8 +235,14 @@ extension PMViewController: UICollectionViewDelegate, UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        let width = collectionView.frame.width / 2
-        let size = CGSize(width: width, height: width)
-        return size
+        if indexPath.row == nowcast.count {
+            let width = collectionView.frame.width
+            let size = CGSize(width: width, height: width*0.4)
+            return size
+        } else {
+            let width = collectionView.frame.width / 2
+            let size = CGSize(width: width, height: width)
+            return size
+        }
     }
 }
