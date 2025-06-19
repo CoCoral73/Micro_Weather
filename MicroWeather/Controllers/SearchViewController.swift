@@ -60,12 +60,8 @@ extension SearchViewController: UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText == "" {
-            tableView.reloadData()
-        } else {
-            searchResults = addressManager.filterAddress(keyword: searchText)
-            tableView.reloadData()
-        }
+        searchResults = addressManager.filterAddress(keyword: searchText)
+        tableView.reloadData()
     }
 }
 
