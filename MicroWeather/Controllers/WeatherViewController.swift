@@ -56,11 +56,9 @@ class WeatherViewController: UIViewController {
     }
     
     @objc private func placemarkDidChange(_ notification: Notification) {
-        guard let newPlacemark = notification.userInfo?["newPlacemark"] as? Placemark else {
+        guard let newPlacemark = notification.userInfo?["newPlacemark"] as? Placemark, placemark != newPlacemark else {
             return
         }
-        
-        if placemark == newPlacemark { return }
         
         placemark = newPlacemark
         fetchUltraShortTermWeatherAndUpdateUI()
