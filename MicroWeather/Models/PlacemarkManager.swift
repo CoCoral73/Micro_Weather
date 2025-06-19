@@ -32,7 +32,7 @@ class PlacemarkManager {
     
     private let recentKey = "recentPlacemarks"
     private let bookmarkKey = "bookmarkPlacemarks"
-    private let maxRecent = 5
+    private let maxRecent = 10
 
     // 저장·불러오기 공통 로직
     private func loadList(forKey key: String) -> [Placemark] {

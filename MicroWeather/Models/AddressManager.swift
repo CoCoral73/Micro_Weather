@@ -53,7 +53,7 @@ final class AddressManager {
         let keyword = keyword.replacingOccurrences(of: " ", with: "")
         
         return allAddress.filter { address in
-            let keywords = extractSearchKeywords(from: address.region_3depth_name)
+            let keywords = extractSearchKeywords(from: address.full_address)
             return keywords.contains { $0.contains(keyword) }
         }
     }
