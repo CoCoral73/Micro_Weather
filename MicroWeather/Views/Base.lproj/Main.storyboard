@@ -664,7 +664,7 @@
         <scene sceneID="RKG-5p-0jO">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="clE-ub-ZUz" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="날씨" id="1SE-2r-Je3"/>
+                    <tabBarItem key="tabBarItem" title="날씨" image="sun.max" catalog="system" selectedImage="sun.max.fill" id="1SE-2r-Je3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="hzN-HB-Uuv">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
@@ -702,7 +702,7 @@
         <scene sceneID="LoT-4J-c6s">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="d8B-Td-0vS" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="미세먼지" id="ZBl-Q0-sev"/>
+                    <tabBarItem key="tabBarItem" title="미세먼지" image="smoke" catalog="system" selectedImage="smoke.fill" id="ZBl-Q0-sev"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="zqd-13-nDU">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
@@ -724,15 +724,19 @@
     <resources>
         <image name="arrow.clockwise.circle" catalog="system" width="128" height="123"/>
         <image name="dot.scope" catalog="system" width="128" height="124"/>
+        <image name="smoke" catalog="system" width="128" height="96"/>
+        <image name="smoke.fill" catalog="system" width="128" height="101"/>
         <image name="star" catalog="system" width="128" height="116"/>
+        <image name="sun.max" catalog="system" width="128" height="125"/>
+        <image name="sun.max.fill" catalog="system" width="128" height="125"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBrownColor">
-            <color red="0.63529411759999999" green="0.51764705879999995" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.63529411764705879" green="0.51764705882352946" blue="0.36862745098039218" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGroupedBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

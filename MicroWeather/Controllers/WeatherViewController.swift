@@ -214,6 +214,7 @@ class WeatherViewController: UIViewController {
         
         firstVC.view.isHidden = (idx != 0)
         secondVC.view.isHidden = (idx != 1)
+        self.view.backgroundColor = (idx == 0) ? .systemBackground : .systemGroupedBackground
     }
     
     private func setupConstraints(for subview: UIView) {
