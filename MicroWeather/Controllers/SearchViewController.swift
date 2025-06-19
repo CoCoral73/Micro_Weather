@@ -55,15 +55,11 @@ extension SearchViewController: UISearchBarDelegate {
         return !text.trimmingCharacters(in: .whitespaces).isEmpty
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let keyword = searchBar.text else { return }
-        
-        searchResults = addressManager.filterAddress(keyword: keyword)
-        tableView.reloadData()
-    }
-    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText == "" {
+            tableView.reloadData()
+        } else {
+            searchResults = addressManager.filterAddress(keyword: searchText)
             tableView.reloadData()
         }
     }

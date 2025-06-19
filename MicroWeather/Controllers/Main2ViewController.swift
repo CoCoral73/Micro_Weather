@@ -167,7 +167,7 @@ extension Main2ViewController: UITableViewDelegate, UITableViewDataSource {
         
         // 2) 출처 레이블
         let creditLabel = UILabel()
-        creditLabel.text = "출처: 기상청, “단기예보조회” 데이터 (CC BY 4.0)\n출처: 공공데이터포털 (https://www.data.go.kr)"
+        creditLabel.text = "출처: 기상청, “단기예보조회” 데이터 (CC BY 4.0)\n공공데이터포털 (https://www.data.go.kr)"
         creditLabel.font = .systemFont(ofSize: 11)
         creditLabel.numberOfLines = 0
         creditLabel.textAlignment = .center
