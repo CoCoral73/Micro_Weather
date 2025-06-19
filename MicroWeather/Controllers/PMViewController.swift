@@ -86,6 +86,7 @@ class PMViewController: UIViewController {
             case .success(let name):
                 self.stationName = name
                 self.pmManager.fetchMeasurement(stationName: name) { result in
+                    self.nowcast = []
                     switch result {
                     case .success(let item):
                         DispatchQueue.main.async {
