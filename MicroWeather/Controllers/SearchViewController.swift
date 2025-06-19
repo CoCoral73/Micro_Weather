@@ -55,6 +55,10 @@ extension SearchViewController: UISearchBarDelegate {
         return !text.trimmingCharacters(in: .whitespaces).isEmpty
     }
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        self.view.endEditing(true)
+    }
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText == "" {
             tableView.reloadData()
