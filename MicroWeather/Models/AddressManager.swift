@@ -50,6 +50,30 @@ final class AddressManager {
     }
     
     func filterAddress(keyword: String) -> [Address] {
-        return allAddress.filter { $0.full_address.contains(keyword) }
+        let keyword = keyword.replacingOccurrences(of: " ", with: "")
+        
+        return allAddress.filter { address in
+            let keywords = extractSearchKeywords(from: address.region_3depth_name)
+            return keywords.contains { $0.contains(keyword) }
+        }
+    }
+    
+    /// 검색용 키워드 추출
+    func extractSearchKeywords(from address: String) -> [String] {
+        var result = [String]()
+
+        let noSpace = address.replacingOccurrences(of: " ", with: "")
+        result.append(noSpace)
+
+        // "사당3동" → "사당", "사당동"
+        let pattern = #"([가-힣]+)\d+동"#
+        if let match = noSpace.range(of: pattern, options: .regularExpression) {
+            let base = String(noSpace[match]).replacingOccurrences(of: "동", with: "")
+            let onlyName = base.replacingOccurrences(of: "\\d+", with: "", options: .regularExpression)
+            result.append(onlyName)
+            result.append(onlyName + "동")
+        }
+
+        return Array(Set(result.map { $0.lowercased() })) // 중복 제거 + 소문자 통일
     }
 }
