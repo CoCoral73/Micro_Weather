@@ -21,3 +21,7 @@ public struct Cell {
     static let pmFooterCell = "PMFooterCell"
     private init() {}
 }
+
+extension Notification.Name {
+    static let placemarkDidChange = Notification.Name("placemarkDidChange")
+}

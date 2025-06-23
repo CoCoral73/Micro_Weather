@@ -137,7 +137,3 @@ class PlacemarkManager {
         }
     }
 }
-
-extension Notification.Name {
-    static let placemarkDidChange = Notification.Name("placemarkDidChange")
-}

@@ -30,11 +30,11 @@ class PMViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupPlacemark()
+        setupObserver()
         setupCollectionView()
     }
     
-    private func setupPlacemark() {
+    private func setupObserver() {
         if let existing = placemarkManager.currentPlacemark {
             placemark = existing
             
@@ -42,12 +42,17 @@ class PMViewController: UIViewController {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(placemarkDidChange), name: .placemarkDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateData), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     @objc private func placemarkDidChange(_ notification: Notification) {
         guard let newPlacemark = notification.userInfo?["newPlacemark"] as? Placemark, placemark != newPlacemark else { return }
         
         placemark = newPlacemark
+        fetchNowcastAndUpdateUI()
+    }
+    
+    @objc private func updateData(_ notification: Notification) {
         fetchNowcastAndUpdateUI()
     }
     
@@ -73,7 +78,7 @@ class PMViewController: UIViewController {
         }
     }
     
-    private func fetchNowcastAndUpdateUI() {
+    @objc private func fetchNowcastAndUpdateUI() {
         guard let pm = placemark else { return }
         let now = getCurrentTime()
         

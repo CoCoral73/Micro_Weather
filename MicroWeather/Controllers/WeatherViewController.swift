@@ -53,6 +53,7 @@ class WeatherViewController: UIViewController {
     
     private func setupObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(placemarkDidChange), name: .placemarkDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateData), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     @objc private func placemarkDidChange(_ notification: Notification) {
@@ -155,6 +156,11 @@ class WeatherViewController: UIViewController {
                 print("단기예보 가져오기 실패:", error)
             }
         }
+    }
+    
+    @objc func updateData(_ notification: Notification) {
+        fetchUltraShortTermWeatherAndUpdateUI()
+        fetchShortTermForecastAndUpdateUI()
     }
     
     @IBAction func bookmarkButtonTapped(_ sender: UIBarButtonItem) {
